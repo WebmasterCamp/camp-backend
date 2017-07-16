@@ -1,7 +1,7 @@
 {
-  "name": "ywc-register-backend-api",
+  "name": "ywc15-api",
   "version": "1.0.0",
-  "description": "A backend API services that use for YWC registration.",
+  "description": "RESTFul API Server for YWC#15 Website. Code reuse from YWC#14",
   "main": "build/bin/server.js",
   "scripts": {
     "eslint": "eslint --quiet **/**/*.js **/*.js **.js",
