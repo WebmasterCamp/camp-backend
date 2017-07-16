@@ -40,6 +40,7 @@
     "express-jwt": "^5.1.0",
     "express-session": "^1.14.0",
     "express-validator": "^2.20.8",
+    "fb": "^2.0.0",
     "jsonwebtoken": "^7.1.9",
     "lodash": "^4.15.0",
     "lusca": "^1.4.1",
@@ -48,6 +49,8 @@
     "mongoose": "^4.5.9",
     "morgan": "^1.7.0",
     "multer": "^1.2.0",
+    "passport": "^0.3.2",
+    "passport-facebook-token": "^3.3.0",
     "randomstring": "^1.1.5",
     "superagent": "^2.2.0"
   },

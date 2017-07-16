@@ -29,49 +29,6 @@ const router = Router();
 //   res.send('okkkk');
 // });
 
-router.put('/me/step4', isAuthenticated, validateUserStep1, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const { answer1, answer2, answer3 } = req.body;
-    const generalQuestions = [answer1, answer2, answer3].map(answer => ({ answer }));
-    const id = (await User.findOne({ facebook }).select('questions')).questions;
-    const questions = await Question.findById(id);
-    questions.generalQuestions = generalQuestions;
-    await questions.save();
-    await updateRegisterStep(facebook, 1);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
-
-router.put('/me/step5', isAuthenticated, singleUpload('answerFile', 'zip', 'rar', 'x-rar'), validateUserStep2, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const { major, answer1, answer2, answer3, answer4, answerFileUrl } = req.body;
-    const specialQuestions = [answer1, answer2, answer3, answer4 || (req.file || {}).path].map(answer => ({ answer }));
-    const id = (await User.findOne({ facebook }).select('questions')).questions;
-    const questions = await Question.findById(id);
-    questions.specialQuestions = specialQuestions.filter(q => !!q.answer);
-    questions.major = major;
-    if ((major === 'programming' || major === 'design')) {
-      questions.answerFileUrl = answerFileUrl;
-      if (req.file) {
-        questions.answerFile = (req.file || {}).path;
-      }
-    }
-    await questions.save();
-    await updateRegisterStep(facebook, 2);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
-
 router.put('/me/step1', isAuthenticated, singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, hasFile, async (req, res) => {
   try {
     // const { facebook } = req.session;
@@ -153,6 +110,49 @@ router.put('/me/step3', isAuthenticated, singleUpload('portfolio', 'pdf'), valid
     }
     await user.save();
     await updateRegisterStep(facebook, 5);
+    const result = await User.findOne({ facebook }).populate('questions');
+    respondResult(res)(result);
+  } catch (err) {
+    respondErrors(res)(err);
+  }
+});
+
+router.put('/me/step4', isAuthenticated, validateUserStep1, async (req, res) => {
+  try {
+    // const { facebook } = req.session;
+    const facebook = req.facebook;
+    const { answer1, answer2, answer3 } = req.body;
+    const generalQuestions = [answer1, answer2, answer3].map(answer => ({ answer }));
+    const id = (await User.findOne({ facebook }).select('questions')).questions;
+    const questions = await Question.findById(id);
+    questions.generalQuestions = generalQuestions;
+    await questions.save();
+    await updateRegisterStep(facebook, 1);
+    const result = await User.findOne({ facebook }).populate('questions');
+    respondResult(res)(result);
+  } catch (err) {
+    respondErrors(res)(err);
+  }
+});
+
+router.put('/me/step5', isAuthenticated, singleUpload('answerFile', 'zip', 'rar', 'x-rar'), validateUserStep2, async (req, res) => {
+  try {
+    // const { facebook } = req.session;
+    const facebook = req.facebook;
+    const { major, answer1, answer2, answer3, answer4, answerFileUrl } = req.body;
+    const specialQuestions = [answer1, answer2, answer3, answer4 || (req.file || {}).path].map(answer => ({ answer }));
+    const id = (await User.findOne({ facebook }).select('questions')).questions;
+    const questions = await Question.findById(id);
+    questions.specialQuestions = specialQuestions.filter(q => !!q.answer);
+    questions.major = major;
+    if ((major === 'programming' || major === 'design')) {
+      questions.answerFileUrl = answerFileUrl;
+      if (req.file) {
+        questions.answerFile = (req.file || {}).path;
+      }
+    }
+    await questions.save();
+    await updateRegisterStep(facebook, 2);
     const result = await User.findOne({ facebook }).populate('questions');
     respondResult(res)(result);
   } catch (err) {
