@@ -1,0 +1,18 @@
+{
+  "apps" : [{
+    "name"        : "server@8081",
+    "script"      : "./build/bin/server.js",
+    "force"     : true,
+    "env_production" : {
+       "PORT": "8081"
+    }
+  },{
+    "name"       : "server@8080",
+    "script"     : "./build/bin/server.js",
+    "force"     : true,
+    "env_production" : {
+       "PORT": "8080"
+    },
+
+  }]
+}
