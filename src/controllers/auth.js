@@ -54,7 +54,7 @@ export const login = async (req, res) => {
       user = await newUser.save();
     }
     console.log(user);
-    const token = jwt.sign(user, config.JWT_SECRET);
+    const token = jwt.sign(user.toObject(), config.JWT_SECRET);
     return res.send({ token });
   } catch (e) {
     return respondErrors(res)(e);
@@ -62,10 +62,10 @@ export const login = async (req, res) => {
 };
 
 export const me = async (req, res) => {
+  console.log(req.user);
   try {
     const { facebook } = req.user;
     const user = await User.findOne({ facebook }).populate('questions');
-
     respondResult(res)(user);
   } catch (err) {
     respondErrors(res)(err);

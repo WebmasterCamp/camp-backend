@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { login, me, confirm, slip, update } from '../controllers/auth';
-import { singleUpload } from '../middlewares';
 import jwt from 'express-jwt';
+import config from 'config';
+import { login, me, confirm, slip, update } from '../controllers/auth';
+import { singleUpload, isAuthenticated } from '../middlewares';
 
 const router = Router();
 
@@ -10,6 +11,6 @@ router.post('/slip', slip);
 router.post('/update', update);
 
 router.post('/login', login);
-router.get('/me', jwt({ secret: 'ywc14token' }), me);
+router.get('/me', isAuthenticated, me);
 
 export default router;

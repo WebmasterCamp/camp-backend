@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+import config from 'config';
 import { User } from '../models';
 import { respondErrors } from '../utilities';
 import { getUserInfoFromToken } from '../services';
@@ -6,22 +8,30 @@ export const authenticator = (req, res, next) => {
   next();
 };
 
-export const isAuthenticated = async (req, res, next) => {
-  try {
-    // const { facebook } = req.session;
-    const accessToken = req.get('accessToken');
-    const facebook = (await getUserInfoFromToken(accessToken)).id;
-    req.facebook = facebook;
-    const user = await User.findOne({ facebook }).populate('questions');
-    if (user) {
-      req.user = user;
-      next();
-    } else {
-      respondErrors(res)({ code: 403, message: 'Forbidden' });
-    }
-  } catch (err) {
-    respondErrors(res)(err);
-  }
+// export const isAuthenticated = async (req, res, next) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const accessToken = req.get('accessToken');
+//     const facebook = (await getUserInfoFromToken(accessToken)).id;
+//     req.facebook = facebook;
+//     const user = await User.findOne({ facebook }).populate('questions');
+//     if (user) {
+//       req.user = user;
+//       next();
+//     } else {
+//       respondErrors(res)({ code: 403, message: 'Forbidden' });
+//     }
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// };
+
+export const isAuthenticated = (req, res, next) => {
+  const token = req.headers['x-access-token'];
+  const user = jwt.verify(token, config.JWT_SECRET);
+  if (!user) return respondErrors(res)('Not Authorize');
+  req.user = user;
+  return next();
 };
 
 export const isInterviewMember = async (req, res, next) => {
