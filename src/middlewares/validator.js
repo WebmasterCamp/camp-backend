@@ -127,7 +127,7 @@ export const validateUserStep3 = (req, res, next) => {
   req.sanitizeBody('nickName').toString();
   req.sanitizeBody('faculty').toString();
   req.sanitizeBody('department').toString();
-  req.sanitizeBody('academicYear').toString();
+  // req.sanitizeBody('academicYear').toString();
   req.sanitizeBody('university').toString();
   req.sanitizeBody('sex').toString();
   req.sanitizeBody('birthdate').toDate();

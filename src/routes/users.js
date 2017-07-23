@@ -9,17 +9,18 @@ import {
   hasFile,
   requireRoles
 } from '../middlewares';
+import { authen } from '../middlewares/authenticator';
 import { respondResult, respondErrors } from '../utilities';
 import { getUserInfoFromToken } from '../services';
 import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
 import _ from 'lodash';
 
-const updateRegisterStep = async (facebook, step) => {
-  const user = await User.findOne({ facebook });
+const updateRegisterStep = async (id, step) => {
+  const user = await User.findOne({ _id: id });
   user.completed[step - 1] = true;
   user.markModified('completed');
-  if (_.sum(user.completed.map(v => v ? 1 : 0)) === 6) user.status = 'completed';
+  if (user.completed.filter(done => !done).length === 0) user.status = 'completed';
   return await user.save();
 };
 
@@ -28,11 +29,13 @@ const router = Router();
 // router.get('/', (req, res) => {
 //   res.send('okkkk');
 // });
+router.get('/me', authen(), async (req, res) => {
+  return res.send(req.user);
+});
 
-router.put('/me/step1', isAuthenticated, singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, hasFile, async (req, res) => {
+router.put('/me/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, /* hasFile, */ async (req, res) => {
   try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
+    const { _id } = req.user;
     const availbleFields = [
       'title',
       'firstName',
@@ -45,19 +48,47 @@ router.put('/me/step1', isAuthenticated, singleUpload('profilePic', 'jpg', 'png'
       'sex',
       'birthdate'
     ];
-    const user = await User.findOne({ facebook });
-    _.map(availbleFields, (field) => {
+    const user = await User.findOne({ _id });
+    availbleFields.forEach(field => {
       user[field] = req.body[field];
     });
     user.picture = (req.file || {}).path;
-    await user.save();
-    await updateRegisterStep(facebook, 3);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
+    await Promise.all([user.save(), updateRegisterStep(_id, 1)]);
+    return res.send({ success: true });
+  } catch (e) {
+    return res.error(e);
   }
 });
+
+// router.put('/me/step1', isAuthenticated, singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, hasFile, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const availbleFields = [
+//       'title',
+//       'firstName',
+//       'lastName',
+//       'nickName',
+//       'faculty',
+//       'department',
+//       'academicYear',
+//       'university',
+//       'sex',
+//       'birthdate'
+//     ];
+//     const user = await User.findOne({ facebook });
+//     _.map(availbleFields, (field) => {
+//       user[field] = req.body[field];
+//     });
+//     user.picture = (req.file || {}).path;
+//     await user.save();
+//     await updateRegisterStep(facebook, 3);
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
 router.put('/me/step2', isAuthenticated, validateUserStep4, async (req, res) => {
   try {
@@ -199,6 +230,16 @@ router.put('/me/personal', isAuthenticated, async (req, res) => {
   }
 });
 
+router.put('/me/confirm', authen('in progress'), async (req, res) => {
+  try {
+    const { _id } = req.user;
+    await User.findOneAndUpdate({ _id }, { status: 'completed' });
+    return res.send({ success: true });
+  } catch (e) {
+    return respondErrors(res)(e);
+  }
+});
+
 router.post('/login', async (req, res) => {
   try {
     req.checkBody('accessToken', 'Invalid accessToken').notEmpty().isString();
@@ -228,10 +269,6 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     respondErrors(res)(err);
   }
-});
-
-router.get('/me', isAuthenticated, async (req, res) => {
-  respondResult(res)(req.user);
 });
 
 router.get('/testme/:token', async (req, res) => {

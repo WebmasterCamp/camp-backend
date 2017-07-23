@@ -6,7 +6,7 @@
       "name": "ywc-register-backend-api",
       "interpreter": "./node_modules/.bin/babel-node",
       "env": {
-        "PORT": 8080,
+        "PORT": 3001,
         "NODE_ENV": "dev"
       },
       "error_file": "./pm2/logs/ywc-register-backend-api.err.log",

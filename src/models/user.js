@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
@@ -15,7 +15,8 @@ const schema = new Schema({
   nickName: String,
   faculty: String,
   department: String,
-  academicYear: String,
+  // academicYear: String,
+  academicYear: Number,
   university: String,
   sex: String,
   birthdate: Date,
@@ -47,7 +48,11 @@ const schema = new Schema({
   updated_at: Date,
   no: String,
   transfer_money: String,
-  slips: [String]
+  slips: [String],
+  major: {
+    type: String,
+    enum: ['content', 'programmer', 'designer', 'marketing']
+  }
 });
 
 export default mongoose.model('User', schema);

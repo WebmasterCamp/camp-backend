@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import sample from './sample';
+
 import users from './users';
 import count from './count';
 import admin from './admin';
@@ -12,9 +12,8 @@ import member from './member';
 
 const router = Router();
 router.get('/', (req, res) => {
-  res.status(200).send({ status: 'Server API Running' });
+  res.status(200).send({ status: 'API Server is running!' });
 });
-router.use('/sample', sample);
 router.use('/users', users);
 router.use('/count', count);
 router.use('/admin', admin);

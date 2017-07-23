@@ -37,7 +37,6 @@ export const login = async (req, res) => {
         fields: 'id,first_name,last_name,email'
       }, (err, data) => err ? reject(err) : resolve(data));
     });
-    console.log(fbUser);
     let user = await User.findOne({ facebook: fbUser.id });
     if (!user) {
       console.log('NO USER: CREATE ONE');

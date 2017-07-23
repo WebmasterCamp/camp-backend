@@ -4,9 +4,9 @@ import { User } from '../models';
 import { respondErrors } from '../utilities';
 import { getUserInfoFromToken } from '../services';
 
-export const authenticator = (req, res, next) => {
-  next();
-};
+// export const authenticator = (req, res, next) => {
+//   next();
+// };
 
 // export const isAuthenticated = async (req, res, next) => {
 //   try {
@@ -25,6 +25,16 @@ export const authenticator = (req, res, next) => {
 //     respondErrors(res)(err);
 //   }
 // };
+export const authen = (type = 'any') => (req, res, next) => {
+  const token = req.headers['x-access-token'];
+  const user = jwt.verify(token, config.JWT_SECRET);
+  if (!user) return respondErrors(res)('Not Authorize');
+  if (type === 'any' || type === user.status || type.indexOf(user.status) !== -1) {
+    req.user = user;
+    return next();
+  }
+  return res.error('Not Authorize');
+};
 
 export const isAuthenticated = (req, res, next) => {
   const token = req.headers['x-access-token'];
@@ -58,4 +68,4 @@ export const afterAnnounce = async (req, res, next) => {
   }
 };
 
-export default authenticator;
+// export default authenticator;
