@@ -9,6 +9,7 @@ import auth from './auth';
 import slip from './slip';
 import interview from './interview';
 import member from './member';
+import registration from './registration';
 
 const router = Router();
 router.get('/', (req, res) => {
@@ -23,5 +24,6 @@ router.use('/auth', auth);
 router.use('/slip', slip);
 router.use('/interview', interview);
 router.use('/member', member);
+router.use('/registration', registration);
 
 export default router;

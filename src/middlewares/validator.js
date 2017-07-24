@@ -3,16 +3,109 @@ import _ from 'lodash';
 
 export const validator = () => expressValidator({
   customValidators: {
+    isArray: target => _.isArray(target),
     isString: (target) => _.isString(target),
-    isMajor: (target) => _.includes(['programming', 'design', 'content', 'marketing'], target)
+    isMajor: (target) => _.includes(['programming', 'design', 'content', 'marketing'], target),
+    arraySize: (target, lower, upper) => target.length >= lower && target.length <= upper
   }
 });
+
+export const validateRegistrationStep = [
+  (req, res, next) => {
+    // STEP 1 Form Validation
+    req.checkBody('title', 'Invalid').notEmpty();
+    req.checkBody('firstName', 'Invalid').notEmpty();
+    req.checkBody('lastName', 'Invalid').notEmpty();
+    req.checkBody('nickname', 'Invalid').notEmpty();
+    req.checkBody('faculty', 'Invalid').notEmpty();
+    req.checkBody('department', 'Invalid').notEmpty();
+    req.checkBody('academicYear', 'Invalid').notEmpty();
+    req.checkBody('university', 'Invalid').notEmpty();
+    req.checkBody('sex', 'Invalid').notEmpty();
+    req.checkBody('birthdate', 'Invalid').notEmpty().isDate();
+
+    req.sanitizeBody('title').toString();
+    req.sanitizeBody('firstName').toString();
+    req.sanitizeBody('lastName').toString();
+    req.sanitizeBody('nickname').toString();
+    req.sanitizeBody('faculty').toString();
+    req.sanitizeBody('department').toString();
+    req.sanitizeBody('academicYear').toString();
+    req.sanitizeBody('university').toString();
+    req.sanitizeBody('sex').toString();
+    req.sanitizeBody('birthdate').toDate();
+
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // STEP 2 Form Validation
+    req.checkBody('address', 'Invalid').notEmpty();
+    req.checkBody('province', 'Invalid').notEmpty();
+    req.checkBody('postalCode', 'Invalid').notEmpty();
+    req.checkBody('phone', 'Invalid').notEmpty();
+    req.checkBody('email', 'Invalid').notEmpty().isEmail();
+    req.checkBody('blood', 'Invalid').notEmpty();
+    req.checkBody('foodAllergy', 'Invalid').notEmpty();
+    req.checkBody('medAllergy', 'Invalid').notEmpty();
+    req.checkBody('disease', 'Invalid').notEmpty();
+
+    req.sanitizeBody('address').toString();
+    req.sanitizeBody('province').toString();
+    req.sanitizeBody('postalCode').toString();
+    req.sanitizeBody('phone').toString();
+    req.sanitizeBody('email').toString();
+    req.sanitizeBody('blood').toString();
+    req.sanitizeBody('foodAllergy').toString();
+    req.sanitizeBody('medAllergy').toString();
+    req.sanitizeBody('disease').toString();
+
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // STEP 3 Form Validation
+    req.checkBody('knowCamp', 'Invalid').notEmpty();
+    req.checkBody('whyJoinYWC', 'Invalid').notEmpty();
+    req.checkBody('expectation', 'Invalid').notEmpty();
+
+    req.sanitizeBody('knowCamp').toString();
+    req.sanitizeBody('whyJoinYWC').toString();
+    req.sanitizeBody('expectation').toString();
+
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // TODO: STEP 4: General question
+    req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // TODO: STEP 5: Major Question
+    return next();
+  },
+  (req, res, next) => {
+    // TODO: FINAL STEP: Confirm
+    req.checkBody('role', 'Invalid').notEmpty();
+    req.sanitizeBody('role').toString();
+
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  }
+];
 
 export const registerValidator = (req, res, next) => {
   req.checkBody('title', 'Invalid').notEmpty();
   req.checkBody('firstName', 'Invalid').notEmpty();
   req.checkBody('lastName', 'Invalid').notEmpty();
-  req.checkBody('nickName', 'Invalid').notEmpty();
+  req.checkBody('nickname', 'Invalid').notEmpty();
   req.checkBody('address', 'Invalid').notEmpty();
   req.checkBody('province', 'Invalid').notEmpty();
   req.checkBody('postCode', 'Invalid').notEmpty();
@@ -38,7 +131,7 @@ export const registerValidator = (req, res, next) => {
   req.sanitizeBody('title').toString();
   req.sanitizeBody('firstName').toString();
   req.sanitizeBody('lastName').toString();
-  req.sanitizeBody('nickName').toString();
+  req.sanitizeBody('nickname').toString();
   req.sanitizeBody('address').toString();
   req.sanitizeBody('province').toString();
   req.sanitizeBody('postCode').toString();
@@ -136,6 +229,7 @@ export const validateUserStep3 = (req, res, next) => {
   if (errors) return res.status(400).send(errors);
   return next();
 };
+
 export const validateUserStep4 = (req, res, next) => {
   req.checkBody('address', 'Invalid').notEmpty();
   req.checkBody('province', 'Invalid').notEmpty();

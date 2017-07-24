@@ -25,10 +25,6 @@ const updateRegisterStep = async (id, step) => {
 };
 
 const router = Router();
-// Require Admin
-// router.get('/', (req, res) => {
-//   res.send('okkkk');
-// });
 router.get('/me', authen(), async (req, res) => {
   return res.send(req.user);
 });
@@ -41,12 +37,15 @@ router.put('/me/step1', authen('in progress'), singleUpload('profilePic', 'jpg',
       'firstName',
       'lastName',
       'nickName',
-      'faculty',
-      'department',
-      'academicYear',
-      'university',
+      'birthdate',
       'sex',
-      'birthdate'
+      'phone',
+      'email',
+      'religion',
+      'university',
+      'academicYear',
+      'faculty',
+      'department'
     ];
     const user = await User.findOne({ _id });
     availbleFields.forEach(field => {
@@ -57,6 +56,22 @@ router.put('/me/step1', authen('in progress'), singleUpload('profilePic', 'jpg',
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);
+  }
+});
+
+router.put('/me/confirm', authen('in progress'), async (req, res) => {
+  /*
+    TODO
+    1. Check that camper complete ALL general and major question
+    2. Saving role to user
+    3. Marked as completed
+  */
+  try {
+    const { _id } = req.user;
+    await User.findOneAndUpdate({ _id }, { status: 'completed' });
+    return res.send({ success: true });
+  } catch (e) {
+    return respondErrors(res)(e);
   }
 });
 
@@ -230,72 +245,71 @@ router.put('/me/personal', isAuthenticated, async (req, res) => {
   }
 });
 
-router.put('/me/confirm', authen('in progress'), async (req, res) => {
-  try {
-    const { _id } = req.user;
-    await User.findOneAndUpdate({ _id }, { status: 'completed' });
-    return res.send({ success: true });
-  } catch (e) {
-    return respondErrors(res)(e);
-  }
-});
+// router.post('/login', async (req, res) => {
+//   try {
+//     req.checkBody('accessToken', 'Invalid accessToken').notEmpty().isString();
+//     const errors = req.validationErrors();
+//     if (errors) respondErrors(errors, 400);
+//     else {
+//       const { accessToken } = req.body;
+//       const { id, email } = await getUserInfoFromToken(accessToken);
+//       const user = await User.findOne({ facebook: id });
+//       // req.session.accessToken = accessToken;
+//       // req.session.facebook = id;
+//       if (!user) {
+//         const questions = new Question();
+//         const q = await questions.save();
+//         const newUser = new User({
+//           facebook: id,
+//           email,
+//           questions: q._id,
+//           completed: _.range(6).map(() => false),
+//           status: 'in progress'
+//         });
+//         await newUser.save();
+//       }
+//       const NewUser = await User.findOne({ facebook: id });
+//       respondResult(res)(NewUser);
+//     }
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// // });
 
-router.post('/login', async (req, res) => {
-  try {
-    req.checkBody('accessToken', 'Invalid accessToken').notEmpty().isString();
-    const errors = req.validationErrors();
-    if (errors) respondErrors(errors, 400);
-    else {
-      const { accessToken } = req.body;
-      const { id, email } = await getUserInfoFromToken(accessToken);
-      const user = await User.findOne({ facebook: id });
-      // req.session.accessToken = accessToken;
-      // req.session.facebook = id;
-      if (!user) {
-        const questions = new Question();
-        const q = await questions.save();
-        const newUser = new User({
-          facebook: id,
-          email,
-          questions: q._id,
-          completed: _.range(6).map(() => false),
-          status: 'in progress'
-        });
-        await newUser.save();
-      }
-      const NewUser = await User.findOne({ facebook: id });
-      respondResult(res)(NewUser);
-    }
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.get('/testme/:token', async (req, res) => {
+//   try {
+//     const facebookInfo = await getUserInfoFromToken(req.params.token);
+//     const facebook = facebookInfo.id;
+//     const user = await User.findOne({ facebook });
+//     respondResult(res)(user);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.get('/testme/:token', async (req, res) => {
-  try {
-    const facebookInfo = await getUserInfoFromToken(req.params.token);
-    const facebook = facebookInfo.id;
-    const user = await User.findOne({ facebook });
-    respondResult(res)(user);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
-
-router.get('/logout', (req, res) => {
-  // req.session.destroy(() => {
-  //   req.session = null;
-  //   res.send({ logout: true });
-  // });
-  res.status(200).send({ logout: true });
-});
+// router.get('/logout', (req, res) => {
+//   // req.session.destroy(() => {
+//   //   req.session = null;
+//   //   res.send({ logout: true });
+//   // });
+//   res.status(200).send({ logout: true });
+// });
 
 router.get('/stat', async (req, res) => {
   try {
-    const counts = { content: 191, design: 199, marketing: 324, programming: 375 };
-    respondResult(res)({ register: counts });
+    const programmingCompleted = User.count({ status: 'completed', major: 'programming' });
+    const designCompleted = User.count({ status: 'completed', major: 'design' });
+    const contentCompleted = User.count({ status: 'completed', major: 'content' });
+    const marketingCompleted = User.count({ status: 'completed', major: 'marketing' });
+    const [programming, design, content, marketing] = await Promise.all([programmingCompleted, designCompleted, contentCompleted, marketingCompleted]);
+    return res.send({
+      programming,
+      design,
+      content,
+      marketing
+    });
   } catch (err) {
-    respondErrors(res)(err);
+    return res.error(err);
   }
 });
 
