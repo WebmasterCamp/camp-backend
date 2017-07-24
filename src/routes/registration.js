@@ -95,7 +95,6 @@ router.put('/step3', authen('in progress'), validateRegistrationStep[2], async (
 router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (req, res) => {
   try {
     // TO CHECK: If role as affect on general question -> check role
-    console.log('hello');
     const { answers } = req.body;
     const { _id } = req.user;
     const user = await User.findOne({ _id }).select('questions');
@@ -108,16 +107,44 @@ router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (
   }
 });
 
+router.put('/step5', authen('in progress'), validateRegistrationStep[4], async (req, res) => {
+  try {
+    // TODO: FILE UPLOAD FOR SURE
+    const { answers, major } = req.body;
+    const { _id } = req.user;
+    const user = await User.findOne({ _id }).select('questions');
+    const question = await Question.findOne({ _id: user.questions });
+    question.specialQuestions[major] = answers.map(answer => ({ answer }));
+    if (question.completedMajor.indexOf(major) === -1) {
+      question.completedMajor.push(major);
+    }
+    await Promise.all([question.save(), updateRegisterStep(_id, 5)]);
+    return res.send({ success: true });
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
 router.post('/confirm', authen('in progress'), async (req, res) => {
   try {
     const { _id } = req.user;
-    const user = User.findOne({ _id });
-    if (user.completed.map(isDone => !isDone).length !== 0) {
-      return res.error('Non completed registration form');
+    const user = await User.findOne({ _id }).populate('questions');
+    if (user.completed.filter(isDone => !isDone).length !== 0) {
+      return res.error('Non completed registration form.');
     }
+    const { major } = req.body;
+    if (user.questions.completedMajor.indexOf(major) === -1) {
+      return res.error('You did not completed major questions yet.');
+    }
+    const majorSpecialQuestions = user.questions.specialQuestions[major];
+    const question = await Question.findOne({ _id: user.questions._id });
+    question.specialQuestions = {
+      [major]: majorSpecialQuestions
+    };
+    question.confirmedMajor = major;
     user.status = 'completed';
     user.major = req.body.major;
-    await user.save();
+    await Promise.all([user.save(), question.save()]);
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);

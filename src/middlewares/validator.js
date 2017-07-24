@@ -88,12 +88,15 @@ export const validateRegistrationStep = [
   },
   (req, res, next) => {
     // TODO: STEP 5: Major Question
+    req.checkBody('major', 'Invalid role').notEmpty().isMajor();
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
     return next();
   },
   (req, res, next) => {
     // TODO: FINAL STEP: Confirm
-    req.checkBody('role', 'Invalid').notEmpty();
-    req.sanitizeBody('role').toString();
+    req.checkBody('major', 'Invalid').notEmpty().isMajor();
+    req.sanitizeBody('major').toString();
 
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);

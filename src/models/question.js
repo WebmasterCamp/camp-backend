@@ -10,9 +10,18 @@ const answerSchema = new Schema({
 
 const schema = new Schema({
   __v: { type: Number, select: false },
-  major: String,
+  completedMajor: [String],
+  confirmedMajor: {
+    type: String,
+    enum: ['content', 'programming', 'design', 'marketing']
+  },
   generalQuestions: [answerSchema],
-  specialQuestions: [_.cloneDeep(answerSchema)],
+  specialQuestions: {
+    design: [_.cloneDeep(answerSchema)],
+    marketing: [_.cloneDeep(answerSchema)],
+    content: [_.cloneDeep(answerSchema)],
+    programming: [_.cloneDeep(answerSchema)]
+  },
   answerFile: String,
   answerFileUrl: String
 });

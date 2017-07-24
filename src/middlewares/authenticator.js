@@ -25,11 +25,12 @@ import { getUserInfoFromToken } from '../services';
 //     respondErrors(res)(err);
 //   }
 // };
-export const authen = (type = 'any') => (req, res, next) => {
+export const authen = (type = 'any') => async (req, res, next) => {
   const token = req.headers['x-access-token'];
   const user = jwt.verify(token, config.JWT_SECRET);
   if (!user) return respondErrors(res)('Not Authorize');
-  if (type === 'any' || type === user.status || type.indexOf(user.status) !== -1) {
+  const userObj = await User.findOne({ _id: user._id });
+  if (type === 'any' || type === userObj.status || type.indexOf(userObj.status) !== -1) {
     req.user = user;
     return next();
   }
