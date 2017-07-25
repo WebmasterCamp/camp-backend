@@ -54,8 +54,8 @@ app.disable('etag');
 app.use(cors());
 // app.use(authenticator);
 app.use('/', routes);
+app.use('/uploads', express.static('uploads'));
 app.use(errorHandler());
-app.use(express.static('uploads'));
 // app.use((req, res, next) => {
 //   console.log(req.get('accessToken'));
 //   next();
