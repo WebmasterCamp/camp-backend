@@ -1,6 +1,7 @@
 import multer from 'multer';
 import mime from 'mime';
 import _ from 'lodash';
+import mkdirp from 'mkdirp';
 import { respondErrors } from '../utilities';
 import { generateUniqueString } from '../helpers';
 import config from 'config';
@@ -18,12 +19,13 @@ mime.define({
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    const dir = `${STORAGE_PATH}/${file.fieldname}`;
+    mkdirp.sync(dir);
     cb(null, STORAGE_PATH);
   },
   filename: async (req, file, cb) => {
     const unique = await generateUniqueString();
-    // cb(null, file.fieldname + '-' + req.session.facebook + '-' + unique + '-' + Date.now() + '.' + mime.extension(file.mimetype).replace('jpeg', 'jpg'));
-    cb(null, file.fieldname + '-' + unique + '-' + Date.now() + '.' + mime.extension(file.mimetype).replace('jpeg', 'jpg'));
+    cb(null, `${file.fieldname}/${unique}-${Date.now()}.${mime.extension(file.mimetype).replace('jpeg', 'jpg')}`);
   }
 });
 

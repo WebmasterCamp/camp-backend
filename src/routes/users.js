@@ -16,64 +16,90 @@ import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
 import _ from 'lodash';
 
-const updateRegisterStep = async (id, step) => {
-  const user = await User.findOne({ _id: id });
-  user.completed[step - 1] = true;
-  user.markModified('completed');
-  if (user.completed.filter(done => !done).length === 0) user.status = 'completed';
-  return await user.save();
-};
-
 const router = Router();
 router.get('/me', authen(), async (req, res) => {
-  return res.send(req.user);
+  const user = await User.findOne({ _id: req.user._id }).populate('questions');
+  if (!user) {
+    return res.error('User Not Found');
+  }
+  return res.send(user);
 });
 
-router.put('/me/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, /* hasFile, */ async (req, res) => {
+router.get('/stat', async (req, res) => {
   try {
-    const { _id } = req.user;
-    const availbleFields = [
-      'title',
-      'firstName',
-      'lastName',
-      'nickName',
-      'birthdate',
-      'sex',
-      'phone',
-      'email',
-      'religion',
-      'university',
-      'academicYear',
-      'faculty',
-      'department'
-    ];
-    const user = await User.findOne({ _id });
-    availbleFields.forEach(field => {
-      user[field] = req.body[field];
+    const programmingCompleted = User.count({ status: 'completed', major: 'programming' });
+    const designCompleted = User.count({ status: 'completed', major: 'design' });
+    const contentCompleted = User.count({ status: 'completed', major: 'content' });
+    const marketingCompleted = User.count({ status: 'completed', major: 'marketing' });
+    const [programming, design, content, marketing] = await Promise.all([programmingCompleted, designCompleted, contentCompleted, marketingCompleted]);
+    return res.send({
+      programming,
+      design,
+      content,
+      marketing
     });
-    user.picture = (req.file || {}).path;
-    await Promise.all([user.save(), updateRegisterStep(_id, 1)]);
-    return res.send({ success: true });
-  } catch (e) {
-    return res.error(e);
+  } catch (err) {
+    return res.error(err);
   }
 });
 
-router.put('/me/confirm', authen('in progress'), async (req, res) => {
-  /*
-    TODO
-    1. Check that camper complete ALL general and major question
-    2. Saving role to user
-    3. Marked as completed
-  */
-  try {
-    const { _id } = req.user;
-    await User.findOneAndUpdate({ _id }, { status: 'completed' });
-    return res.send({ success: true });
-  } catch (e) {
-    return respondErrors(res)(e);
+router.get('/:id',
+  authen(['SuperAdmin', 'Supporter', 'JudgeDev', 'JudgeMarketing', 'JudgeContent', 'JudgeDesign']),
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id).populate('questions');
+      return res.send(user);
+    } catch (e) {
+      return res.error(e);
+    }
   }
-});
+);
+
+// router.put('/me/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, /* hasFile, */ async (req, res) => {
+//   try {
+//     const { _id } = req.user;
+//     const availbleFields = [
+//       'title',
+//       'firstName',
+//       'lastName',
+//       'nickName',
+//       'birthdate',
+//       'sex',
+//       'phone',
+//       'email',
+//       'religion',
+//       'university',
+//       'academicYear',
+//       'faculty',
+//       'department'
+//     ];
+//     const user = await User.findOne({ _id });
+//     availbleFields.forEach(field => {
+//       user[field] = req.body[field];
+//     });
+//     user.picture = (req.file || {}).path;
+//     await Promise.all([user.save(), updateRegisterStep(_id, 1)]);
+//     return res.send({ success: true });
+//   } catch (e) {
+//     return res.error(e);
+//   }
+// });
+
+// router.put('/me/confirm', authen('in progress'), async (req, res) => {
+//   /*
+//     TODO
+//     1. Check that camper complete ALL general and major question
+//     2. Saving role to user
+//     3. Marked as completed
+//   */
+//   try {
+//     const { _id } = req.user;
+//     await User.findOneAndUpdate({ _id }, { status: 'completed' });
+//     return res.send({ success: true });
+//   } catch (e) {
+//     return respondErrors(res)(e);
+//   }
+// });
 
 // router.put('/me/step1', isAuthenticated, singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, hasFile, async (req, res) => {
 //   try {
@@ -105,145 +131,145 @@ router.put('/me/confirm', authen('in progress'), async (req, res) => {
 //   }
 // });
 
-router.put('/me/step2', isAuthenticated, validateUserStep4, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const availbleFields = [
-      'address',
-      'province',
-      'postCode',
-      'phone',
-      'email',
-      'interview',
-      'idInterview'
-    ];
-    const user = await User.findOne({ facebook });
-    _.map(availbleFields, (field) => {
-      user[field] = req.body[field];
-    });
-    await user.save();
-    await updateRegisterStep(facebook, 4);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/me/step2', isAuthenticated, validateUserStep4, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const availbleFields = [
+//       'address',
+//       'province',
+//       'postCode',
+//       'phone',
+//       'email',
+//       'interview',
+//       'idInterview'
+//     ];
+//     const user = await User.findOne({ facebook });
+//     _.map(availbleFields, (field) => {
+//       user[field] = req.body[field];
+//     });
+//     await user.save();
+//     await updateRegisterStep(facebook, 4);
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.put('/me/step3', isAuthenticated, singleUpload('portfolio', 'pdf'), validateUserStep5, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const availbleFields = [
-      'blood',
-      'foodAllergy',
-      'disease',
-      'medicine',
-      'knowCamp',
-      'knowCampAnother',
-      'whyJoinYwc',
-      'prominentPoint',
-      'event',
-      'portfolioUrl'
-    ];
-    const user = await User.findOne({ facebook });
-    _.map(availbleFields, (field) => {
-      user[field] = req.body[field];
-    });
-    if (req.file) {
-      user.portfolio = (req.file || {}).path;
-    }
-    await user.save();
-    await updateRegisterStep(facebook, 5);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/me/step3', isAuthenticated, singleUpload('portfolio', 'pdf'), validateUserStep5, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const availbleFields = [
+//       'blood',
+//       'foodAllergy',
+//       'disease',
+//       'medicine',
+//       'knowCamp',
+//       'knowCampAnother',
+//       'whyJoinYwc',
+//       'prominentPoint',
+//       'event',
+//       'portfolioUrl'
+//     ];
+//     const user = await User.findOne({ facebook });
+//     _.map(availbleFields, (field) => {
+//       user[field] = req.body[field];
+//     });
+//     if (req.file) {
+//       user.portfolio = (req.file || {}).path;
+//     }
+//     await user.save();
+//     await updateRegisterStep(facebook, 5);
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.put('/me/step4', isAuthenticated, validateUserStep1, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const { answer1, answer2, answer3 } = req.body;
-    const generalQuestions = [answer1, answer2, answer3].map(answer => ({ answer }));
-    const id = (await User.findOne({ facebook }).select('questions')).questions;
-    const questions = await Question.findById(id);
-    questions.generalQuestions = generalQuestions;
-    await questions.save();
-    await updateRegisterStep(facebook, 1);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/me/step4', isAuthenticated, validateUserStep1, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const { answer1, answer2, answer3 } = req.body;
+//     const generalQuestions = [answer1, answer2, answer3].map(answer => ({ answer }));
+//     const id = (await User.findOne({ facebook }).select('questions')).questions;
+//     const questions = await Question.findById(id);
+//     questions.generalQuestions = generalQuestions;
+//     await questions.save();
+//     await updateRegisterStep(facebook, 1);
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.put('/me/step5', isAuthenticated, singleUpload('answerFile', 'zip', 'rar', 'x-rar'), validateUserStep2, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const { major, answer1, answer2, answer3, answer4, answerFileUrl } = req.body;
-    const specialQuestions = [answer1, answer2, answer3, answer4 || (req.file || {}).path].map(answer => ({ answer }));
-    const id = (await User.findOne({ facebook }).select('questions')).questions;
-    const questions = await Question.findById(id);
-    questions.specialQuestions = specialQuestions.filter(q => !!q.answer);
-    questions.major = major;
-    if ((major === 'programming' || major === 'design')) {
-      questions.answerFileUrl = answerFileUrl;
-      if (req.file) {
-        questions.answerFile = (req.file || {}).path;
-      }
-    }
-    await questions.save();
-    await updateRegisterStep(facebook, 2);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/me/step5', isAuthenticated, singleUpload('answerFile', 'zip', 'rar', 'x-rar'), validateUserStep2, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const { major, answer1, answer2, answer3, answer4, answerFileUrl } = req.body;
+//     const specialQuestions = [answer1, answer2, answer3, answer4 || (req.file || {}).path].map(answer => ({ answer }));
+//     const id = (await User.findOne({ facebook }).select('questions')).questions;
+//     const questions = await Question.findById(id);
+//     questions.specialQuestions = specialQuestions.filter(q => !!q.answer);
+//     questions.major = major;
+//     if ((major === 'programming' || major === 'design')) {
+//       questions.answerFileUrl = answerFileUrl;
+//       if (req.file) {
+//         questions.answerFile = (req.file || {}).path;
+//       }
+//     }
+//     await questions.save();
+//     await updateRegisterStep(facebook, 2);
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.put('/me/step6', isAuthenticated, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const user = await User.findOne({ facebook });
-    user.updated_at = new Date();
-    user.save();
-    await updateRegisterStep(facebook, 6);
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/me/step6', isAuthenticated, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const user = await User.findOne({ facebook });
+//     user.updated_at = new Date();
+//     user.save();
+//     await updateRegisterStep(facebook, 6);
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.put('/me/personal', isAuthenticated, async (req, res) => {
-  try {
-    // const { facebook } = req.session;
-    const facebook = req.facebook;
-    const availbleFields = [
-      'phone',
-      'email',
-      'blood',
-      'disease',
-      'foodAllergy',
-      'medicine'
-    ];
-    const user = await User.findOne({ facebook });
-    _.map(availbleFields, (field) => {
-      user[field] = req.body[field];
-    });
-    await user.save();
-    const result = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/me/personal', isAuthenticated, async (req, res) => {
+//   try {
+//     // const { facebook } = req.session;
+//     const facebook = req.facebook;
+//     const availbleFields = [
+//       'phone',
+//       'email',
+//       'blood',
+//       'disease',
+//       'foodAllergy',
+//       'medicine'
+//     ];
+//     const user = await User.findOne({ facebook });
+//     _.map(availbleFields, (field) => {
+//       user[field] = req.body[field];
+//     });
+//     await user.save();
+//     const result = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
 // router.post('/login', async (req, res) => {
 //   try {
@@ -295,24 +321,6 @@ router.put('/me/personal', isAuthenticated, async (req, res) => {
 //   res.status(200).send({ logout: true });
 // });
 
-router.get('/stat', async (req, res) => {
-  try {
-    const programmingCompleted = User.count({ status: 'completed', major: 'programming' });
-    const designCompleted = User.count({ status: 'completed', major: 'design' });
-    const contentCompleted = User.count({ status: 'completed', major: 'content' });
-    const marketingCompleted = User.count({ status: 'completed', major: 'marketing' });
-    const [programming, design, content, marketing] = await Promise.all([programmingCompleted, designCompleted, contentCompleted, marketingCompleted]);
-    return res.send({
-      programming,
-      design,
-      content,
-      marketing
-    });
-  } catch (err) {
-    return res.error(err);
-  }
-});
-
 router.get('/', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
   try {
     let status = req.query.status;
@@ -328,6 +336,7 @@ router.get('/', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
     respondErrors(res)(err);
   }
 });
+
 router.get('/step', async (req, res) => {
   try {
     const users = await User.find({});
@@ -397,6 +406,5 @@ router.get('/profile/:no', async (req, res) => {
     respondErrors(res)(err);
   }
 });
-
 
 export default router;

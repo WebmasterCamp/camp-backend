@@ -3,7 +3,6 @@ import { authen } from '../middlewares/authenticator';
 import { validateRegistrationStep, hasFile } from '../middlewares/validator';
 import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
-import _ from 'lodash';
 
 const updateRegisterStep = async (id, step) => {
   const user = await User.findOne({ _id: id });
@@ -13,12 +12,9 @@ const updateRegisterStep = async (id, step) => {
 };
 
 const router = Router();
-router.get('/me', authen(), async (req, res) => {
-  return res.send(req.user);
-});
 
 // STEP 1: Personal Info
-router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateRegistrationStep[0], /* hasFile, */ async (req, res) => {
+router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateRegistrationStep[0], hasFile, async (req, res) => {
   try {
     const { _id } = req.user;
     const user = await User.findOne({ _id });
