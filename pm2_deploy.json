@@ -1,14 +1,16 @@
 {
   "apps" : [
     {
-      "name": "api",
+      "name": "ywc15-api",
       "script": "./build/bin/server.js",
       "force": true,
-      "env_production" : {
-        "PORT": "5555"
-      },
       "env_staging": {
+        "name": "api-staging",
         "PORT": "5554"
+      },
+      "env_production" : {
+        "name": "api-production",
+        "PORT": "5555"
       }
     }
   ]
