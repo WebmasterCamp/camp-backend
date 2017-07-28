@@ -11,6 +11,7 @@
     "build:file": "babel src --out-file build/bundle.js --source-maps",
     "build:clear": "rm -rf build",
     "start": "node build/bin/server.js",
+    "start-staging": "pm2 start pm2_deploy.json --env staging",
     "test": "echo \"Error: no test specified\" && exit 1",
     "pm2-dev": "pm2 delete all; pm2-dev start pm2.json",
     "pm2:start": "pm2 start pm2_deploy.json --env production",
