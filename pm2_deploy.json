@@ -3,7 +3,6 @@
     {
       "name": "ywc15-api",
       "script": "./build/bin/server.js",
-      "force": true,
       "env_staging": {
         "name": "api-staging",
         "PORT": "5554",
@@ -12,6 +11,16 @@
       "env_production" : {
         "name": "api-production",
         "PORT": "5555",
+        "NODE_ENV": "production"
+      },
+      "error_file": "./pm2/logs/ywc-register-backend-api.err.log",
+      "out_file": "./pm2/logs/ywc-register-backend-api.out.log",
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ywc15-cron",
+      "script": "./build/cron.js",
+      "env": {
         "NODE_ENV": "production"
       }
     }

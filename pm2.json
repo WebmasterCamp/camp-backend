@@ -13,6 +13,11 @@
       "out_file": "./pm2/logs/ywc-register-backend-api.out.log",
       "watch": "src",
       "log_date_format"  : "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ywc-cron",
+      "script": "./src/cron.js",
+      "interpreter": "./node_modules/.bin/babel-node"
     }
   ]
 }
