@@ -15,6 +15,7 @@ import { getUserInfoFromToken } from '../services';
 import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
 import _ from 'lodash';
+import slackUtils from '../utilities/slack';
 
 const router = Router();
 router.get('/me', authen(), async (req, res) => {

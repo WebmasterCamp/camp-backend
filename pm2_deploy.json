@@ -6,11 +6,13 @@
       "force": true,
       "env_staging": {
         "name": "api-staging",
-        "PORT": "5554"
+        "PORT": "5554",
+        "NODE_ENV": "staging"
       },
       "env_production" : {
         "name": "api-production",
-        "PORT": "5555"
+        "PORT": "5555",
+        "NODE_ENV": "production"
       }
     }
   ]
