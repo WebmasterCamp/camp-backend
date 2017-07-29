@@ -26,15 +26,19 @@ import { getUserInfoFromToken } from '../services';
 //   }
 // };
 export const authen = (type = 'any') => async (req, res, next) => {
-  const token = req.headers['x-access-token'];
-  const user = jwt.verify(token, config.JWT_SECRET);
-  if (!user) return respondErrors(res)('Not Authorize');
-  const userObj = await User.findOne({ _id: user._id });
-  if (type === 'any' || type === userObj.status || type.indexOf(userObj.status) !== -1) {
-    req.user = user;
-    return next();
+  try {
+    const token = req.headers['x-access-token'];
+    const user = jwt.verify(token, config.JWT_SECRET);
+    if (!user) return respondErrors(res)('Not Authorize');
+    const userObj = await User.findOne({ _id: user._id });
+    if (type === 'any' || type === userObj.status || type.indexOf(userObj.status) !== -1) {
+      req.user = user;
+      return next();
+    }
+    return res.error('Not Authorize');
+  } catch (e) {
+    return respondErrors(res)(e);
   }
-  return res.error('Not Authorize');
 };
 
 export const isAuthenticated = (req, res, next) => {
