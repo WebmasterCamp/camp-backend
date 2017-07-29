@@ -4,7 +4,7 @@ import moment from 'moment';
 import slackUtils from './utilities/slack';
 
 const backupDatabase = new CronJob({
-  cronTime: '0 * * * *',
+  cronTime: '0 1 * * *',
   onTick: () => {
     exec(`mongodump --db ywc15 --out backup/${moment().format('DD-MM-YYYY')}`, (err) => {
       if (err) {
