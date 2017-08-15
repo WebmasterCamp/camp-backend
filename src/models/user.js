@@ -29,6 +29,10 @@ const schema = new Schema({
     enum: ['ชาย', 'หญิง']
   },
   birthdate: Date,
+  religion: {
+    type: String,
+    enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'สิกข์']
+  },
   age: Number, // Aim to deprecated
   address: String,
   province: String,

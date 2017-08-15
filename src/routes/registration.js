@@ -30,7 +30,9 @@ router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'p
       'academicYear',
       'university',
       'sex',
-      'birthdate'
+      'birthdate',
+      'religion',
+      'blood'
     ];
     fields.forEach(field => {
       user[field] = req.body[field];

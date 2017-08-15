@@ -218,6 +218,8 @@ export const validateUserStep3 = (req, res, next) => {
   req.checkBody('university', 'Invalid').notEmpty();
   req.checkBody('sex', 'Invalid').notEmpty();
   req.checkBody('birthdate', 'Invalid').notEmpty().isDate();
+  req.checkBody('religion', 'Invalid').notEmpty();
+  req.checkBody('blood', 'Invalid').notEmpty();
 
   req.sanitizeBody('title').toString();
   req.sanitizeBody('firstName').toString();
@@ -231,6 +233,8 @@ export const validateUserStep3 = (req, res, next) => {
   req.sanitizeBody('university').toString();
   req.sanitizeBody('sex').toString();
   req.sanitizeBody('birthdate').toDate();
+  req.sanitizeBody('religion').toString();
+  req.sanitizeBody('blood').toString();
 
   const errors = req.validationErrors();
   if (errors) return res.status(400).send(errors);
