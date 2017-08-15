@@ -14,6 +14,8 @@ const schema = new Schema({
   },
   firstName: String,
   lastName: String,
+  firstNameEN: String,
+  lastNameEN: String,
   nickname: String,
   faculty: String,
   department: String,

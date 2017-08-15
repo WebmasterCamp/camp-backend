@@ -22,6 +22,8 @@ router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'p
       'title',
       'firstName',
       'lastName',
+      'firstNameEN',
+      'lastNameEN',
       'nickname',
       'faculty',
       'department',

@@ -209,6 +209,8 @@ export const validateUserStep3 = (req, res, next) => {
   req.checkBody('title', 'Invalid').notEmpty();
   req.checkBody('firstName', 'Invalid').notEmpty();
   req.checkBody('lastName', 'Invalid').notEmpty();
+  req.checkBody('firstNameEN', 'Invalid').notEmpty();
+  req.checkBody('lastNameEN', 'Invalid').notEmpty();
   req.checkBody('nickName', 'Invalid').notEmpty();
   req.checkBody('faculty', 'Invalid').notEmpty();
   req.checkBody('department', 'Invalid').notEmpty();
@@ -220,6 +222,8 @@ export const validateUserStep3 = (req, res, next) => {
   req.sanitizeBody('title').toString();
   req.sanitizeBody('firstName').toString();
   req.sanitizeBody('lastName').toString();
+  req.sanitizeBody('firstNameEN').toString();
+  req.sanitizeBody('lastNameEN').toString();
   req.sanitizeBody('nickName').toString();
   req.sanitizeBody('faculty').toString();
   req.sanitizeBody('department').toString();

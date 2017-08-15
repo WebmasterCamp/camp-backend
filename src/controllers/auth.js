@@ -47,8 +47,8 @@ export const login = async (req, res) => {
         questions: q._id,
         completed: _.range(5).map(() => false),
         status: 'in progress',
-        firstName: fbUser.first_name,
-        lastName: fbUser.last_name,
+        firstNameEN: fbUser.first_name,
+        lastNameEN: fbUser.last_name,
         email: fbUser.email
       });
       user = await newUser.save();
