@@ -7,7 +7,8 @@ const schema = new Schema({
   facebook: String,
   status: String,
   questions: { type: ObjectId, ref: 'Question' },
-  completed: [Boolean], // Mark boolean to check that user has done each step
+  completed: [Boolean], // Mark boolean to check that user has done each step,
+  completed_at: Date,
   title: {
     type: String,
     enum: ['นาย', 'นางสาว']

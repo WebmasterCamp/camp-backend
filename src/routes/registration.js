@@ -144,6 +144,7 @@ router.post('/confirm', authen('in progress'), async (req, res) => {
     question.confirmedMajor = major;
     user.status = 'completed';
     user.major = req.body.major;
+    user.completed_at = new Date();
     await Promise.all([user.save(), question.save()]);
     return res.send({ success: true });
   } catch (e) {
