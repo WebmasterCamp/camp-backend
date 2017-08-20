@@ -54,12 +54,16 @@ router.put('/step2', authen('in progress'), validateRegistrationStep[1], async (
       'address',
       'province',
       'postalCode',
-      'phone',
       'email',
-      'blood',
+      'phone',
+      'emergencyPhone',
+      'emergencyPhoneRelated',
+      'shirtSize',
+      'food',
+      'disease',
+      'med',
       'foodAllergy',
-      'medAllergy',
-      'disease'
+      'medAllergy'
     ];
     fields.forEach(field => {
       user[field] = req.body[field];
