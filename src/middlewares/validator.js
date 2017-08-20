@@ -23,6 +23,8 @@ export const validateRegistrationStep = [
     req.checkBody('university', 'Invalid').notEmpty();
     req.checkBody('sex', 'Invalid').notEmpty();
     req.checkBody('birthdate', 'Invalid').notEmpty().isDate();
+    req.checkBody('religion', 'Invalid').notEmpty();
+    req.checkBody('blood', 'Invalid').notEmpty();
 
     req.sanitizeBody('title').toString();
     req.sanitizeBody('firstName').toString();
@@ -34,6 +36,8 @@ export const validateRegistrationStep = [
     req.sanitizeBody('university').toString();
     req.sanitizeBody('sex').toString();
     req.sanitizeBody('birthdate').toDate();
+    req.sanitizeBody('religion').toString();
+    req.sanitizeBody('blood').toString();
 
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);
@@ -68,7 +72,6 @@ export const validateRegistrationStep = [
     req.sanitizeBody('med').toString();
     req.sanitizeBody('foodAllergy').toString();
     req.sanitizeBody('medAllergy').toString();
-    req.sanitizeBody('disease').toString();
 
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);

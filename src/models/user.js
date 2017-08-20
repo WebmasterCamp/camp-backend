@@ -9,6 +9,7 @@ const schema = new Schema({
   questions: { type: ObjectId, ref: 'Question' },
   completed: [Boolean], // Mark boolean to check that user has done each step,
   completed_at: Date,
+  // Step 1 Form field
   title: {
     type: String,
     enum: ['นาย', 'นางสาว']
@@ -34,19 +35,25 @@ const schema = new Schema({
     type: String,
     enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'สิกข์']
   },
-  age: Number, // Aim to deprecated
-  address: String,
-  province: String,
-  postalCode: String,
-  phone: String,
-  email: String,
   blood: {
     type: String,
     enum: ['A', 'B', 'O', 'AB']
   },
+  age: Number, // Aim to deprecated
+  // Step 2 Form field
+  address: String,
+  province: String,
+  postalCode: String,
+  email: String,
+  phone: String,
+  emergencyPhone: String,
+  emergencyPhoneRelated: String,
+  shirtSize: String,
+  food: String,
+  disease: String,
+  med: String,
   foodAllergy: String,
   medAllergy: String,
-  disease: String,
   knowCamp: {
     type: String,
     enum: [
