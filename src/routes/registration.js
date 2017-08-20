@@ -38,7 +38,7 @@ router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'p
       user[field] = req.body[field];
     });
     if (req.file) {
-      user.picture = req.file;
+      user.picture = req.file.path;
     } else if (!req.file && !user.picture) {
       return res.status(400).send({ code: 400, message: 'require file' });
     }
