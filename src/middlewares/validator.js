@@ -50,10 +50,10 @@ export const validateRegistrationStep = [
     req.checkBody('emergencyPhoneRelated', 'Invalid').notEmpty();
     req.checkBody('shirtSize', 'Invalid').notEmpty();
     req.checkBody('food', 'Invalid').notEmpty();
-    req.checkBody('disease', 'Invalid').notEmpty();
-    req.checkBody('med', 'Invalid').notEmpty();
+    // req.checkBody('disease', 'Invalid').notEmpty();
+    // req.checkBody('med', 'Invalid').notEmpty();
     req.checkBody('foodAllergy', 'Invalid').notEmpty();
-    req.checkBody('medAllergy', 'Invalid').notEmpty();
+    // req.checkBody('medAllergy', 'Invalid').notEmpty();
 
     req.sanitizeBody('address').toString();
     req.sanitizeBody('province').toString();
