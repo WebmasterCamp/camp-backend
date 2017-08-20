@@ -39,7 +39,6 @@ export const login = async (req, res) => {
     });
     let user = await User.findOne({ facebook: fbUser.id });
     if (!user) {
-      console.log('NO USER: CREATE ONE');
       const questions = new Question();
       const q = await questions.save();
       const newUser = new User({
@@ -53,7 +52,6 @@ export const login = async (req, res) => {
       });
       user = await newUser.save();
     }
-    console.log(user);
     const token = jwt.sign(user.toObject(), config.JWT_SECRET);
     return res.send({ token });
   } catch (e) {
@@ -62,7 +60,6 @@ export const login = async (req, res) => {
 };
 
 export const me = async (req, res) => {
-  console.log(req.user);
   try {
     const { facebook } = req.user;
     const user = await User.findOne({ facebook }).populate('questions');
