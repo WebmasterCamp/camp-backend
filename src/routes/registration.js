@@ -14,7 +14,7 @@ const updateRegisterStep = async (id, step) => {
 const router = Router();
 
 // STEP 1: Personal Info
-router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateRegistrationStep[0], hasFile, async (req, res) => {
+router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateRegistrationStep[0], async (req, res) => {
   try {
     const { _id } = req.user;
     const user = await User.findOne({ _id });
@@ -37,7 +37,12 @@ router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'p
     fields.forEach(field => {
       user[field] = req.body[field];
     });
-    user.picture = (req.file || {}).path;
+    if (req.file) {
+      user.picture = req.file;
+    } else if (!req.file && !user.picture) {
+      return res.status(400).send({ code: 400, message: 'require file' });
+    }
+    // user.picture = (req.file || {}).path;
     await Promise.all([user.save(), updateRegisterStep(_id, 1)]);
     return res.send({ success: true });
   } catch (e) {
