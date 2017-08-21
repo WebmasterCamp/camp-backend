@@ -78,7 +78,22 @@ export const validateRegistrationStep = [
     return next();
   },
   (req, res, next) => {
-    // STEP 3 Form Validation
+    // STEP 3: General question
+    req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // TODO: STEP 4: Major Question
+    req.checkBody('major', 'Invalid role').notEmpty().isMajor();
+    req.checkBody('answers', 'Invalid').isArray();
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // TODO: STEP 5 Form Validation
     req.checkBody('knowCamp', 'Invalid').notEmpty();
     req.checkBody('whyJoinYWC', 'Invalid').notEmpty();
     req.checkBody('expectation', 'Invalid').notEmpty();
@@ -87,20 +102,6 @@ export const validateRegistrationStep = [
     req.sanitizeBody('whyJoinYWC').toString();
     req.sanitizeBody('expectation').toString();
 
-    const errors = req.validationErrors();
-    if (errors) return res.status(400).send(errors);
-    return next();
-  },
-  (req, res, next) => {
-    // TODO: STEP 4: General question
-    req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
-    const errors = req.validationErrors();
-    if (errors) return res.status(400).send(errors);
-    return next();
-  },
-  (req, res, next) => {
-    // TODO: STEP 5: Major Question
-    req.checkBody('major', 'Invalid role').notEmpty().isMajor();
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);
     return next();
