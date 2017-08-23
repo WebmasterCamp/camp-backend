@@ -54,17 +54,10 @@ const schema = new Schema({
   med: String,
   foodAllergy: String,
   medAllergy: String,
-  knowCamp: {
-    type: String,
-    enum: [
-      'คนรู้จัก',
-      'facebook',
-      'email',
-      'roadshow',
-      'twitter',
-      'other'
-    ]
-  },
+  skype: String,
+  // Step 3 form field
+  knowCamp: [String],
+  activities: String,
   knowCampAnother: { type: String, required: false }, // Aim to deprecated
   whyJoinYwc: String,
   expectation: String,

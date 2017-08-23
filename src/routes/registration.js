@@ -68,7 +68,8 @@ router.put('/step2', authen('in progress'), validateRegistrationStep[1], async (
       'disease',
       'med',
       'foodAllergy',
-      'medAllergy'
+      'medAllergy',
+      'skype'
     ];
     fields.forEach(field => {
       user[field] = req.body[field];
@@ -80,8 +81,27 @@ router.put('/step2', authen('in progress'), validateRegistrationStep[1], async (
   }
 });
 
-// STEP 3: General Question
+// STEP 3: Portfolio and How did you know YWC?
 router.put('/step3', authen('in progress'), validateRegistrationStep[2], async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const user = await User.findOne({ _id });
+    const fields = [
+      'knowCamp',
+      'activities'
+    ];
+    fields.forEach(field => {
+      user[field] = req.body[field];
+    });
+    await Promise.all([user.save(), updateRegisterStep(_id, 3)]);
+    return res.send({ success: true });
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+// STEP 4: General Question
+router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (req, res) => {
   try {
     // TO CHECK: If role as affect on general question -> check role
     const { answers } = req.body;
@@ -89,15 +109,15 @@ router.put('/step3', authen('in progress'), validateRegistrationStep[2], async (
     const user = await User.findOne({ _id }).select('questions');
     const questions = await Question.findOne({ _id: user.questions });
     questions.generalQuestions = answers.map(answer => ({ answer }));
-    await Promise.all([questions.save(), updateRegisterStep(_id, 3)]);
+    await Promise.all([questions.save(), updateRegisterStep(_id, 4)]);
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);
   }
 });
 
-// STEP 4: Major Question
-router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (req, res) => {
+// STEP 5: Major Question
+router.put('/step5', authen('in progress'), validateRegistrationStep[4], async (req, res) => {
   try {
     // TODO: FILE UPLOAD FOR SURE
     const { answers, major } = req.body;
@@ -108,27 +128,7 @@ router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (
     if (question.completedMajor.indexOf(major) === -1) {
       question.completedMajor.push(major);
     }
-    await Promise.all([question.save(), updateRegisterStep(_id, 4)]);
-    return res.send({ success: true });
-  } catch (e) {
-    return res.error(e);
-  }
-});
-
-// STEP 5(MAYBE): Portfolio and How did you know YWC?
-router.put('/step5', authen('in progress'), validateRegistrationStep[4], async (req, res) => {
-  try {
-    const { _id } = req.user;
-    const user = await User.findOne({ _id });
-    const fields = [
-      'knowCamp',
-      'whyJoinYWC',
-      'expectation'
-    ];
-    fields.forEach(field => {
-      user[field] = req.body[field];
-    });
-    await Promise.all([user.save(), updateRegisterStep(_id, 5)]);
+    await Promise.all([question.save(), updateRegisterStep(_id, 5)]);
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);

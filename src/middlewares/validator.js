@@ -57,6 +57,7 @@ export const validateRegistrationStep = [
     // req.checkBody('disease', 'Invalid').notEmpty();
     // req.checkBody('med', 'Invalid').notEmpty();
     req.checkBody('foodAllergy', 'Invalid').notEmpty();
+    req.checkBody('skype', 'Invalid').notEmpty();
     // req.checkBody('medAllergy', 'Invalid').notEmpty();
 
     req.sanitizeBody('address').toString();
@@ -72,36 +73,35 @@ export const validateRegistrationStep = [
     req.sanitizeBody('med').toString();
     req.sanitizeBody('foodAllergy').toString();
     req.sanitizeBody('medAllergy').toString();
+    req.sanitizeBody('skype').toString();
 
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);
     return next();
   },
   (req, res, next) => {
-    // STEP 3: General question
+    // TODO: STEP 3 Form Validation
+    req.checkBody('knowCamp', 'Invalid').notEmpty();
+    req.checkBody('activities', 'Invalid').notEmpty();
+
+    req.sanitizeBody('knowCamp').toString();
+    req.sanitizeBody('activities').toString();
+
+    const errors = req.validationErrors();
+    if (errors) return res.status(400).send(errors);
+    return next();
+  },
+  (req, res, next) => {
+    // STEP 4: General question
     req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);
     return next();
   },
   (req, res, next) => {
-    // TODO: STEP 4: Major Question
+    // TODO: STEP 5: Major Question
     req.checkBody('major', 'Invalid role').notEmpty().isMajor();
     req.checkBody('answers', 'Invalid').isArray();
-    const errors = req.validationErrors();
-    if (errors) return res.status(400).send(errors);
-    return next();
-  },
-  (req, res, next) => {
-    // TODO: STEP 5 Form Validation
-    req.checkBody('knowCamp', 'Invalid').notEmpty();
-    req.checkBody('whyJoinYWC', 'Invalid').notEmpty();
-    req.checkBody('expectation', 'Invalid').notEmpty();
-
-    req.sanitizeBody('knowCamp').toString();
-    req.sanitizeBody('whyJoinYWC').toString();
-    req.sanitizeBody('expectation').toString();
-
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);
     return next();
