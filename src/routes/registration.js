@@ -117,14 +117,31 @@ router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (
 });
 
 // STEP 5: Major Question
-router.put('/step5', authen('in progress'), validateRegistrationStep[4], async (req, res) => {
+router.put('/step5', authen('in progress'), singleUpload('file', 'jpg', 'png', 'jpeg'), validateRegistrationStep[4], async (req, res) => {
   try {
-    // TODO: FILE UPLOAD FOR SURE
     const { answers, major } = req.body;
     const { _id } = req.user;
     const user = await User.findOne({ _id }).select('questions');
     const question = await Question.findOne({ _id: user.questions });
-    question.specialQuestions[major] = answers.map(answer => ({ answer }));
+    if (major === 'design') {
+      if (!req.file && !question.specialQuestions[major][2]) {
+        return res.status(400).send({ code: 400, message: 'require file' });
+      } else if (req.file) {
+        question.specialQuestions[major] = [
+          { answer: answers[0] },
+          { answer: answers[1] },
+          { answer: req.file.path }
+        ];
+      } else {
+        question.specialQuestions[major] = [
+          { answer: answers[0] },
+          { answer: answers[1] },
+          { answer: question.specialQuestions[major][2].answer }
+        ];
+      }
+    } else {
+      question.specialQuestions[major] = answers.map(answer => ({ answer }));
+    }
     if (question.completedMajor.indexOf(major) === -1) {
       question.completedMajor.push(major);
     }
