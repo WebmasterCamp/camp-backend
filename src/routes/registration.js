@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authen } from '../middlewares/authenticator';
-import { validateRegistrationStep, hasFile } from '../middlewares/validator';
+import { validateRegistrationStep } from '../middlewares/validator';
 import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
 

@@ -44,17 +44,17 @@ router.get('/stat', async (req, res) => {
   }
 });
 
-router.get('/:id',
-  authen(['SuperAdmin', 'Supporter', 'JudgeDev', 'JudgeMarketing', 'JudgeContent', 'JudgeDesign']),
-  async (req, res) => {
-    try {
-      const user = await User.findById(req.params.id).populate('questions');
-      return res.send(user);
-    } catch (e) {
-      return res.error(e);
-    }
-  }
-);
+// router.get('/:id',
+//   authen(['SuperAdmin', 'Supporter', 'JudgeDev', 'JudgeMarketing', 'JudgeContent', 'JudgeDesign']),
+//   async (req, res) => {
+//     try {
+//       const user = await User.findById(req.params.id).populate('questions');
+//       return res.send(user);
+//     } catch (e) {
+//       return res.error(e);
+//     }
+//   }
+// );
 
 // router.put('/me/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateUserStep3, /* hasFile, */ async (req, res) => {
 //   try {
@@ -322,90 +322,90 @@ router.get('/:id',
 //   res.status(200).send({ logout: true });
 // });
 
-router.get('/', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
-  try {
-    let status = req.query.status;
-    const userDocs = await User.find(status === 'all' ? {} : { status }).populate('questions');
-    const users = _.map(userDocs, (userDoc) => {
-      const user = userDoc.toObject();
-      user.major = _.get(user, 'questions.major');
-      if (req.session.role !== 'SuperAdmin') delete user.questions;
-      return user;
-    });
-    respondResult(res)(users);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.get('/', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
+//   try {
+//     let status = req.query.status;
+//     const userDocs = await User.find(status === 'all' ? {} : { status }).populate('questions');
+//     const users = _.map(userDocs, (userDoc) => {
+//       const user = userDoc.toObject();
+//       user.major = _.get(user, 'questions.major');
+//       if (req.session.role !== 'SuperAdmin') delete user.questions;
+//       return user;
+//     });
+//     respondResult(res)(users);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.get('/step', async (req, res) => {
-  try {
-    const users = await User.find({});
-    const counts = users.reduce((prev, cur) => {
-      const count = cur.completed.filter((d) => d === true);
-      prev[count.length]++;
-      return prev;
-    }, [0, 0, 0, 0, 0, 0, 0]);
-    respondResult(res)({ register: counts });
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.get('/step', async (req, res) => {
+//   try {
+//     const users = await User.find({});
+//     const counts = users.reduce((prev, cur) => {
+//       const count = cur.completed.filter((d) => d === true);
+//       prev[count.length]++;
+//       return prev;
+//     }, [0, 0, 0, 0, 0, 0, 0]);
+//     respondResult(res)({ register: counts });
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.get('/:id', requireRoles(
-  'SuperAdmin',
-  'Supporter',
-  'JudgeDev',
-  'JudgeMarketing',
-  'JudgeContent',
-  'JudgeDesign'
-), async (req, res) => {
-  try {
-    const userDoc = await User.findById(req.params.id).populate('questions');
-    const user = userDoc.toObject();
-    respondResult(res)(user);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.get('/:id', requireRoles(
+//   'SuperAdmin',
+//   'Supporter',
+//   'JudgeDev',
+//   'JudgeMarketing',
+//   'JudgeContent',
+//   'JudgeDesign'
+// ), async (req, res) => {
+//   try {
+//     const userDoc = await User.findById(req.params.id).populate('questions');
+//     const user = userDoc.toObject();
+//     respondResult(res)(user);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.put('/:id', requireRoles(
-  'SuperAdmin',
-  'Supporter',
-  'JudgeDev',
-  'JudgeMarketing',
-  'JudgeContent',
-  'JudgeDesign'
-), async (req, res) => {
-  try {
-    delete req.body.questions;
-    const user = await User.findById(req.params.id);
-    _.map(Object.keys(req.body), key => {
-      user[key] = req.body[key];
-      if (key === 'status' && req.body[key] === 'in progress') {
-        user.completed[1] = false;
-        user.completed[5] = false;
-        user.markModified('completed');
-      }
-      user.markModified(key);
-    });
-    await user.save();
-    const resultDoc = await User.findById(req.params.id);
-    const result = resultDoc.toObject();
-    delete result.questions;
-    respondResult(res)(result);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.put('/:id', requireRoles(
+//   'SuperAdmin',
+//   'Supporter',
+//   'JudgeDev',
+//   'JudgeMarketing',
+//   'JudgeContent',
+//   'JudgeDesign'
+// ), async (req, res) => {
+//   try {
+//     delete req.body.questions;
+//     const user = await User.findById(req.params.id);
+//     _.map(Object.keys(req.body), key => {
+//       user[key] = req.body[key];
+//       if (key === 'status' && req.body[key] === 'in progress') {
+//         user.completed[1] = false;
+//         user.completed[5] = false;
+//         user.markModified('completed');
+//       }
+//       user.markModified(key);
+//     });
+//     await user.save();
+//     const resultDoc = await User.findById(req.params.id);
+//     const result = resultDoc.toObject();
+//     delete result.questions;
+//     respondResult(res)(result);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
-router.get('/profile/:no', async (req, res) => {
-  try {
-    const user = await User.findOne({ no: req.params.no }).populate('questions');
-    respondResult(res)(user);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-});
+// router.get('/profile/:no', async (req, res) => {
+//   try {
+//     const user = await User.findOne({ no: req.params.no }).populate('questions');
+//     respondResult(res)(user);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// });
 
 export default router;
