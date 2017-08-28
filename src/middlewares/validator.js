@@ -84,7 +84,6 @@ export const validateRegistrationStep = [
     req.checkBody('knowCamp', 'Invalid').notEmpty();
     req.checkBody('activities', 'Invalid').notEmpty();
 
-    req.sanitizeBody('knowCamp').toString();
     req.sanitizeBody('activities').toString();
 
     const errors = req.validationErrors();
