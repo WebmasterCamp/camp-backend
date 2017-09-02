@@ -74,7 +74,7 @@ export const adminLogin = async (req, res) => {
     if (admin) {
       const isMatch = await bcrypt.compare(password, admin.password);
       if (isMatch) {
-        const token = jwt.sign(_.pick(admin, ['username', '_id']), config.JWT_SECRET);
+        const token = jwt.sign(_.pick(admin.toObject(), ['username', '_id']), config.JWT_SECRET);
         return res.send({ token });
       }
     }

@@ -48,7 +48,7 @@ export const adminAuthen = (role = 'any') => async (req, res, next) => {
     if (!admin) return respondErrors(res)('Not Authorize');
     const adminObj = await Admin.findOne({ _id: admin._id });
     if (role === 'any' || role === adminObj.role || role.indexOf(adminObj.role) !== -1) {
-      req.admin = admin;
+      req.admin = adminObj;
       return next();
     }
     return res.error('Not Authorize');

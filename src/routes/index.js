@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import users from './users';
 // import count from './count';
-// import admin from './admin';
+import admin from './admin';
 // import questions from './questions';
 import affiliates from './affiliates';
 import auth from './auth';
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 router.use('/users', users);
 // router.use('/count', count);
-// router.use('/admin', admin);
+router.use('/admin', admin);
 // router.use('/questions', questions);
 router.use('/affiliates', affiliates);
 router.use('/auth', auth);
