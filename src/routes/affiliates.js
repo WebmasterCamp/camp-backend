@@ -49,7 +49,7 @@ router.delete('/:id', adminAuthen('admin'), async (req, res) => {
 
 router.put('/:id/approved', adminAuthen('admin'), async (req, res) => {
   try {
-    await Affiliate.findOneAndUpdate({ _id: req.params.id }, { approved: true });
+    await Affiliate.findOneAndUpdate({ _id: req.params.id }, { approved: req.body.approved });
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);
