@@ -9,7 +9,7 @@ import {
   hasFile,
   requireRoles
 } from '../middlewares';
-import { authen } from '../middlewares/authenticator';
+import { authen, adminAuthen } from '../middlewares/authenticator';
 import { respondResult, respondErrors } from '../utilities';
 import { getUserInfoFromToken } from '../services';
 import { User, Question } from '../models';
@@ -44,6 +44,27 @@ router.get('/stat', async (req, res) => {
   }
 });
 
+router.get('/stat/all', adminAuthen('admin'), async (req, res) => {
+  try {
+    const programmingCompleted = User.count({ status: 'completed', major: 'programming' });
+    const designCompleted = User.count({ status: 'completed', major: 'design' });
+    const contentCompleted = User.count({ status: 'completed', major: 'content' });
+    const marketingCompleted = User.count({ status: 'completed', major: 'marketing' });
+    const pendingPromise = User.count({ status: { $ne: 'completed' }, completed: { $ne: [true, true, true, true, true] } });
+    const notConfirmPromise = User.count({ status: { $ne: 'completed' }, completed: [true, true, true, true, true] });
+    const [programming, design, content, marketing, pending, notConfirm] = await Promise.all([programmingCompleted, designCompleted, contentCompleted, marketingCompleted, pendingPromise, notConfirmPromise]);
+    return res.send({
+      programming,
+      design,
+      content,
+      marketing,
+      pending,
+      notConfirm
+    });
+  } catch (err) {
+    return res.error(err);
+  }
+});
 // router.get('/:id',
 //   authen(['SuperAdmin', 'Supporter', 'JudgeDev', 'JudgeMarketing', 'JudgeContent', 'JudgeDesign']),
 //   async (req, res) => {
