@@ -15,7 +15,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pm2-dev": "pm2 delete all; pm2-dev start pm2.json",
     "pm2:start": "pm2 start pm2_deploy.json --env production",
-    "newclear": "rm -rf node_module && npm i"
+    "newclear": "rm -rf node_module && npm i",
+    "genAdmin": "babel-node ./uploads/genAdmin.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "@slack/client": "^3.10.0",
     "babel-eslint": "^6.1.2",
     "babel-plugin-transform-runtime": "^6.15.0",
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.15.2",
     "cloudinary": "^1.4.1",
     "compression": "^1.6.2",

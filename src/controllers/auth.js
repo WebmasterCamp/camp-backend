@@ -2,8 +2,10 @@ import jwt from 'jsonwebtoken';
 import fb from 'fb';
 import _ from 'lodash';
 import config from 'config';
+import bcrypt from 'bcrypt';
+
 import { respondResult, respondErrors } from '../utilities';
-import { User, Question, Slip } from '../models';
+import { User, Question, Slip, Admin } from '../models';
 // export const login = async (req, res) => {
 //   try {
 //     const { facebook } = req.body;
@@ -56,6 +58,29 @@ export const login = async (req, res) => {
     return res.send({ token });
   } catch (e) {
     return respondErrors(res)(e);
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  try {
+    req.checkBody('username', 'Invalid username').notEmpty().isString();
+    req.checkBody('password', 'Invalid password').notEmpty().isString();
+    req.sanitizeBody('username').toString();
+    req.sanitizeBody('password').toString();
+    const errors = req.validationErrors();
+    if (errors) return res.error(errors);
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ username }).select('password');
+    if (admin) {
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (isMatch) {
+        const token = jwt.sign(_.pick(admin, ['username', '_id']), config.JWT_SECRET);
+        return res.send({ token });
+      }
+    }
+    return res.error('Fail to Login');
+  } catch (e) {
+    return res.error(e);
   }
 };
 

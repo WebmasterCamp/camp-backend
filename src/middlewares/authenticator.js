@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
-import { User } from '../models';
+import { User, Admin } from '../models';
 import { respondErrors } from '../utilities';
 import { getUserInfoFromToken } from '../services';
 
@@ -33,6 +33,22 @@ export const authen = (type = 'any') => async (req, res, next) => {
     const userObj = await User.findOne({ _id: user._id });
     if (type === 'any' || type === userObj.status || type.indexOf(userObj.status) !== -1) {
       req.user = user;
+      return next();
+    }
+    return res.error('Not Authorize');
+  } catch (e) {
+    return respondErrors(res)(e);
+  }
+};
+
+export const adminAuthen = (role = 'any') => async (req, res, next) => {
+  try {
+    const token = req.headers['x-access-token'];
+    const admin = jwt.verify(token, config.JWT_SECRET);
+    if (!admin) return respondErrors(res)('Not Authorize');
+    const adminObj = await Admin.findOne({ _id: admin._id });
+    if (role === 'any' || role === adminObj.role || role.indexOf(adminObj.role) !== -1) {
+      req.admin = admin;
       return next();
     }
     return res.error('Not Authorize');

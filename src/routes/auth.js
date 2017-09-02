@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import jwt from 'express-jwt';
 import config from 'config';
-import { login, me, confirm, slip, update } from '../controllers/auth';
+import { login, adminLogin, me, confirm, slip, update } from '../controllers/auth';
 import { singleUpload, isAuthenticated } from '../middlewares';
 
 const router = Router();
@@ -11,6 +11,7 @@ const router = Router();
 // router.post('/update', update);
 
 router.post('/login', login);
+router.post('/login/admin', adminLogin);
 // router.get('/me', isAuthenticated, me);
 
 export default router;
