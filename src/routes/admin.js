@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import bcrypt from 'bcrypt';
+
 import { adminAuthen } from '../middlewares/authenticator';
 import { requireRoles, adminAuthorize } from '../middlewares';
 import { respondResult, respondSuccess, respondErrors } from '../utilities';
@@ -6,14 +8,6 @@ import { Admin } from '../models';
 
 const router = Router();
 
-// router.get('/', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
-//   try {
-//     const adminUsers = await Admin.find();
-//     respondResult(res)(adminUsers);
-//   } catch (err) {
-//     respondErrors(res)(err);
-//   }
-// });
 // router.post('/', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
 //   try {
 //     req.checkBody('username', 'Invalid username').notEmpty().isString();
@@ -96,6 +90,27 @@ const router = Router();
 //     res.send({ logout: true });
 //   });
 // });
+router.get('/', adminAuthen('admin'), async (req, res) => {
+  try {
+    const adminUsers = await Admin.find();
+    return res.send(adminUsers);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.post('/', adminAuthen('admin'), async (req, res) => {
+  try {
+    await Admin.create({
+      username: req.body.username,
+      password: bcrypt.hashSync(req.body.password, 10),
+      role: req.body.role
+    });
+    return res.send({ success: true });
+  } catch (err) {
+    return res.error(err);
+  }
+});
 
 router.get('/me', adminAuthen('any'), (req, res) => {
   res.send(req.admin);

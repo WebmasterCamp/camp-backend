@@ -82,7 +82,30 @@ const schema = new Schema({
   updated_at: Date,
   no: String,
   transfer_money: String,
-  slips: [String]
+  slips: [String],
+
+  // Grading stage
+  isJudgeStageOne: {
+    type: Boolean,
+    default: false
+  },
+  isPassStageOne: {
+    type: Boolean,
+    default: false
+  },
+  isJudgeStageTwo: {
+    type: Boolean,
+    default: false
+  },
+  isPassStageTwo: {
+    type: Boolean,
+    default: false
+  },
+  isJudgeMajorQuestion: {
+    type: Boolean,
+    default: false
+  },
+  grader_id: { type: ObjectId, ref: 'Admin' }
 });
 
 export default mongoose.model('User', schema);

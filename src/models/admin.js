@@ -8,7 +8,15 @@ const schema = new Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'programmer', 'designer', 'content', 'marketing']
+    enum: [
+      'admin',
+      'programmer',
+      'designer',
+      'content',
+      'marketing',
+      'stage-1',
+      'stage-2'
+    ]
   }
 });
 

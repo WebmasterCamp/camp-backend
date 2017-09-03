@@ -65,6 +65,61 @@ router.get('/stat/all', adminAuthen('admin'), async (req, res) => {
     return res.error(err);
   }
 });
+
+router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
+  try {
+    const users = await User.find({ status: 'completed' });
+    return res.send(users);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.get('/stage-two', adminAuthen(['admin', 'stage-2']), async (req, res) => {
+  try {
+    const users = await User.find({ status: 'completed' });
+    return res.send(users);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.get('/programming', adminAuthen(['admin', 'programming']), async (req, res) => {
+  try {
+    const users = await User.find({ status: 'completed', major: 'programming' });
+    return res.send(users);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.get('/design', adminAuthen(['admin', 'design']), async (req, res) => {
+  try {
+    const users = await User.find({ status: 'completed', major: 'design' });
+    return res.send(users);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.get('/marketing', adminAuthen(['admin', 'marketing']), async (req, res) => {
+  try {
+    const users = await User.find({ status: 'completed', major: 'marketing' });
+    return res.send(users);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.get('/content', adminAuthen(['admin', 'content']), async (req, res) => {
+  try {
+    const users = await User.find({ status: 'completed', major: 'content' });
+    return res.send(users);
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
 // router.get('/:id',
 //   authen(['SuperAdmin', 'Supporter', 'JudgeDev', 'JudgeMarketing', 'JudgeContent', 'JudgeDesign']),
 //   async (req, res) => {
