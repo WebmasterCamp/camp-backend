@@ -18,6 +18,12 @@ import _ from 'lodash';
 import slackUtils from '../utilities/slack';
 
 const router = Router();
+
+router.get('/', adminAuthen('admin'), async (req, res) => {
+  const users = await User.find();
+  return res.send(users);
+});
+
 router.get('/me', authen(), async (req, res) => {
   const user = await User.findOne({ _id: req.user._id }).populate('questions');
   if (!user) {
@@ -42,6 +48,11 @@ router.get('/stat', async (req, res) => {
   } catch (err) {
     return res.error(err);
   }
+});
+
+router.get('/:id', adminAuthen('admin'), async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id }).populate('questions');
+  return res.send(user);
 });
 
 router.get('/stat/all', adminAuthen('admin'), async (req, res) => {
