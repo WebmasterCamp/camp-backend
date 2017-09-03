@@ -116,6 +116,15 @@ router.get('/me', adminAuthen('any'), (req, res) => {
   res.send(req.admin);
 });
 
+router.delete('/:id', adminAuthen('admin'), async (req, res) => {
+  try {
+    await Admin.remove({ _id: req.params.id });
+    return res.send({ success: true });
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
 // router.get('/:id', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
 //   try {
 //     const admin = await Admin.findById(req.params.id);
