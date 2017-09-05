@@ -25,7 +25,7 @@ export const login = async (req, res) => {
   const { accessToken } = req.body;
   if (!accessToken) return respondErrors(res)('Not Token Provide');
   try {
-    fb.setAccessToken(accessToken);
+    // fb.setAccessToken(accessToken);
     await new Promise((resolve, reject) => {
       fb.napi('oauth/access_token', {
         client_id: config.FACEBOOK_ID,
@@ -36,7 +36,8 @@ export const login = async (req, res) => {
     });
     const fbUser = await new Promise((resolve, reject) => {
       fb.napi('/me', {
-        fields: 'id,first_name,last_name,email'
+        fields: 'id,first_name,last_name,email',
+        access_token: accessToken
       }, (err, data) => err ? reject(err) : resolve(data));
     });
     let user = await User.findOne({ facebook: fbUser.id });
