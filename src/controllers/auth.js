@@ -84,64 +84,64 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-export const me = async (req, res) => {
-  try {
-    const { facebook } = req.user;
-    const user = await User.findOne({ facebook }).populate('questions');
-    respondResult(res)(user);
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-};
+// export const me = async (req, res) => {
+//   try {
+//     const { facebook } = req.user;
+//     const user = await User.findOne({ facebook }).populate('questions');
+//     respondResult(res)(user);
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// };
 
-export const confirm = async (req, res) => {
-  try {
-    const { money } = req.body;
-    const user = await User.findOne({ transfer_money: money });
+// export const confirm = async (req, res) => {
+//   try {
+//     const { money } = req.body;
+//     const user = await User.findOne({ transfer_money: money });
 
-    user.slips.push(req.file.path);
+//     user.slips.push(req.file.path);
 
-    const slip = new Slip();
-    slip.transfer_money = user.transfer_money;
-    slip.no = user.no;
-    slip.name = req.file.path;
-    slip.status = 'waiting';
+//     const slip = new Slip();
+//     slip.transfer_money = user.transfer_money;
+//     slip.no = user.no;
+//     slip.name = req.file.path;
+//     slip.status = 'waiting';
 
-    await user.save();
-    await slip.save();
+//     await user.save();
+//     await slip.save();
 
-    respondResult(res)('ok');
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-};
+//     respondResult(res)('ok');
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// };
 
-export const slip = async (req, res) => {
-  try {
-    const { money } = req.body;
-    const user = await User.findOne({ transfer_money: money });
+// export const slip = async (req, res) => {
+//   try {
+//     const { money } = req.body;
+//     const user = await User.findOne({ transfer_money: money });
 
-    if (!user) throw new Error('not found.');
-    if (user.slips.length !== 0) throw new Error('already sent slip.');
+//     if (!user) throw new Error('not found.');
+//     if (user.slips.length !== 0) throw new Error('already sent slip.');
 
-    respondResult(res)('ok');
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-};
+//     respondResult(res)('ok');
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// };
 
-export const update = async (req, res) => {
-  try {
-    const { no, money } = req.body;
-    const user = await User.findOne({ no });
+// export const update = async (req, res) => {
+//   try {
+//     const { no, money } = req.body;
+//     const user = await User.findOne({ no });
 
-    if (!user) throw new Error('not found.');
-    user.transfer_money = money;
+//     if (!user) throw new Error('not found.');
+//     user.transfer_money = money;
 
-    await user.save();
+//     await user.save();
 
-    respondResult(res)('ok');
-  } catch (err) {
-    respondErrors(res)(err);
-  }
-};
+//     respondResult(res)('ok');
+//   } catch (err) {
+//     respondErrors(res)(err);
+//   }
+// };

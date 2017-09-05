@@ -99,6 +99,13 @@ export const validateRegistrationStep = [
     req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
     const errors = req.validationErrors();
     if (errors) return res.status(400).send(errors);
+    if (req.body.answers.filter(x => !x).length !== 0) {
+      return res.status(400).send([{
+        msg: 'Invalid',
+        param: 'answers',
+        value: []
+      }]);
+    }
     return next();
   },
   (req, res, next) => {
@@ -129,6 +136,13 @@ export const majorQuestionValidator = (req, res, next) => {
   // TODO: DO WITH OTHER MAJOR
   const errors = req.validationErrors();
   if (errors) return res.status(400).send(errors);
+  if (req.body.answers.filter(x => !x).length !== 0) {
+    return res.status(400).send([{
+      msg: 'Invalid',
+      param: 'answers',
+      value: []
+    }]);
+  }
   return next();
 };
 
