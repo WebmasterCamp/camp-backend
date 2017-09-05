@@ -123,6 +123,8 @@ export const majorQuestionValidator = (req, res, next) => {
   const { major } = req.body;
   if (major === 'programming') {
     req.checkBody('answers', 'Invalid').isArray().arraySize(4, 4);
+  } else if (major === 'marketing') {
+    req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
   }
   // TODO: DO WITH OTHER MAJOR
   const errors = req.validationErrors();
