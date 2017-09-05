@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authen } from '../middlewares/authenticator';
-import { validateRegistrationStep } from '../middlewares/validator';
+import { validateRegistrationStep, majorQuestionValidator } from '../middlewares/validator';
 import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
 
@@ -63,6 +63,7 @@ router.put('/step2', authen('in progress'), validateRegistrationStep[1], async (
       'phone',
       'emergencyPhone',
       'emergencyPhoneRelated',
+      'emergencyName',
       'shirtSize',
       'food',
       'disease',
@@ -117,7 +118,7 @@ router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (
 });
 
 // STEP 5: Major Question
-router.put('/step5', authen('in progress'), singleUpload('file', 'jpg', 'png', 'jpeg'), validateRegistrationStep[4], async (req, res) => {
+router.put('/step5', authen('in progress'), singleUpload('file', 'jpg', 'png', 'jpeg'), validateRegistrationStep[4], majorQuestionValidator, async (req, res) => {
   try {
     const { answers, major } = req.body;
     const { _id } = req.user;

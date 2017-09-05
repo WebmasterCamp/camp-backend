@@ -48,6 +48,7 @@ const schema = new Schema({
   phone: String,
   emergencyPhone: String,
   emergencyPhoneRelated: String,
+  emergencyName: String,
   shirtSize: String,
   food: String,
   disease: String,
