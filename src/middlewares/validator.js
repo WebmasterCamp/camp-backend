@@ -132,8 +132,11 @@ export const majorQuestionValidator = (req, res, next) => {
     req.checkBody('answers', 'Invalid').isArray().arraySize(4, 4);
   } else if (major === 'marketing') {
     req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
+  } else if (major === 'content') {
+    req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
+  } else {
+    req.checkBody('answers', 'Invalid').isArray().arraySize(3, 3);
   }
-  // TODO: DO WITH OTHER MAJOR
   const errors = req.validationErrors();
   if (errors) return res.status(400).send(errors);
   if (req.body.answers.filter(x => !x).length !== 0) {

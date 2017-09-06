@@ -63,6 +63,7 @@ const schema = new Schema({
   whyJoinYwc: String,
   expectation: String,
 
+  designPortfolio: String,
   major: {
     type: String,
     enum: ['content', 'programming', 'design', 'marketing']
