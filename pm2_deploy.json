@@ -3,6 +3,7 @@
     {
       "name": "ywc15-api",
       "script": "./build/bin/server.js",
+      "exec_mode" : "cluster",
       "env_staging": {
         "name": "api-staging",
         "PORT": "5554",
