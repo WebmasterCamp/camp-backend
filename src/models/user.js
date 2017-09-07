@@ -33,7 +33,7 @@ const schema = new Schema({
   birthdate: Date,
   religion: {
     type: String,
-    enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'สิกข์', 'อื่นๆ']
+    enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'สิกข์', 'ไม่ระบุ']
   },
   blood: {
     type: String,
