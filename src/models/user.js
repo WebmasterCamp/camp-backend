@@ -87,10 +87,6 @@ const schema = new Schema({
   slips: [String],
 
   // Grading stage
-  isJudgeStageOne: {
-    type: Boolean,
-    default: false
-  },
   isPassStageOne: {
     type: Boolean,
     default: false
@@ -103,6 +99,7 @@ const schema = new Schema({
     type: Boolean,
     default: false
   },
+  noteStageTwo: String,
   isJudgeMajorQuestion: {
     type: Boolean,
     default: false
