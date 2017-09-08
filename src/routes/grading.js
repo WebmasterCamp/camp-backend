@@ -29,7 +29,8 @@ router.put('/stage-one/:id', adminAuthen('stage-1'), async (req, res) => {
   const { pass, note = '' } = req.body;
   const { _id: graderId } = req.admin;
   try {
-    const answers = await Question.findById(req.params.id);
+    const user = await User.findById(req.params.id);
+    const answers = await Question.findById(user.questions);
     const { stageOne } = answers;
     const gradedItemIdx = _.findIndex(stageOne, item => item.grader_id.toString() === graderId.toString());
     if (gradedItemIdx !== -1) {
