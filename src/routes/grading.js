@@ -21,7 +21,8 @@ router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => 
 });
 
 router.get('/stage-one/:id', adminAuthen(['admin', 'stage-1']), async (req, res) => {
-  const answers = await Question.findById(req.params.id);
+  const user = await User.findById(req.params.id);
+  const answers = await Question.findById(user.questions);
   return res.send(answers.generalQuestions);
 });
 
