@@ -12,7 +12,6 @@ router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => 
     .select('_id questions')
     .lean();
   return res.send(completedUsers.map(user => Object.assign(user, {
-    _id: user._id.toString().substring(user._id.toString().length - 5),
     questions: {
       generalQuestions: user.questions.generalQuestions,
       stageOne: user.questions.stageOne ?
