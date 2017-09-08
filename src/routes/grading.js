@@ -6,14 +6,17 @@ import { adminAuthen } from '../middlewares/authenticator';
 const router = Router();
 
 router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
+  const { _id: graderId } = req.admin;
   const completedUsers = await User.find({ status: 'completed' })
     .populate('questions')
     .select('_id questions')
     .lean();
   return res.send(completedUsers.map(user => Object.assign(user, {
+    _id: user._id.toString().substring(user._id.toString().length - 5),
     questions: {
       generalQuestions: user.questions.generalQuestions,
-      stageOne: user.questions.stageOne
+      stageOne: user.questions.stageOne ?
+        user.questions.stageOne.find(item => item.grader_id.toString() === graderId.toString()) : {}
     }
   })));
 });
