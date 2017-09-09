@@ -55,7 +55,7 @@ export const login = async (req, res) => {
       });
       user = await newUser.save();
     }
-    const token = jwt.sign(user.toObject(), config.JWT_SECRET);
+    const token = jwt.sign(_.pick(user.toObject(), ['_id', 'facebook', 'status']), config.JWT_SECRET);
     return res.send({ token });
   } catch (e) {
     return respondErrors(res)(e);
