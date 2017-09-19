@@ -21,9 +21,16 @@ router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => 
 });
 
 router.get('/stage-one/:id', adminAuthen(['admin', 'stage-1']), async (req, res) => {
-  const user = await User.findById(req.params.id);
-  const answers = await Question.findById(user.questions);
-  return res.send(answers.generalQuestions);
+  try {
+    const user = await User.findById(req.params.id);
+    const answers = await Question.findById(user.questions);
+    return res.send({
+      answers: answers.generalQuestions,
+      note: answers.stageOne.find(item => item.grader_id.toString() === req.admin._id.toString())
+    });
+  } catch (e) {
+    return res.error(e);
+  }
 });
 
 router.put('/stage-one/:id', adminAuthen('stage-1'), async (req, res) => {
