@@ -77,24 +77,6 @@ router.get('/stat/all', adminAuthen('admin'), async (req, res) => {
   }
 });
 
-router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
-  try {
-    const users = await User.find({ status: 'completed' });
-    return res.send(users);
-  } catch (err) {
-    return res.error(err);
-  }
-});
-
-router.get('/stage-two', adminAuthen(['admin', 'stage-2']), async (req, res) => {
-  try {
-    const users = await User.find({ status: 'completed' });
-    return res.send(users);
-  } catch (err) {
-    return res.error(err);
-  }
-});
-
 router.get('/programming', adminAuthen(['admin', 'programming']), async (req, res) => {
   try {
     const users = await User.find({ status: 'completed', major: 'programming' });

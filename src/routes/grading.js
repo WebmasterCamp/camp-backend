@@ -8,6 +8,7 @@ const router = Router();
 router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
   const { _id: graderId } = req.admin;
   const completedUsers = await User.find({ status: 'completed' })
+    .sort('-completed_at')
     .populate('questions')
     .select('_id questions')
     .lean();
