@@ -55,7 +55,12 @@ router.put('/stage-one/:id', adminAuthen('stage-1'), async (req, res) => {
         isPass: pass
       });
     }
-    await answers.save();
+    if (answers.stageOne.filter(item => item.isPass).length >= 2) {
+      user.isPassStageOne = true;
+    } else {
+      user.isPassStageOne = false;
+    }
+    await [user.save(), answers.save()];
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);
@@ -78,6 +83,12 @@ router.post('/stage-one/calculate', adminAuthen('admin'), async (req, res) => {
   } catch (e) {
     return res.error(e);
   }
+});
+
+router.get('/stage-two', adminAuthen(['admin', 'stage-2']), async (req, res) => {
+  const completedUsers = await User.find({ status: 'completed', isPassStageOne: true })
+    .sort('-completed_at');
+  return res.send(completedUsers);
 });
 
 export default router;
