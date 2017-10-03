@@ -21,9 +21,24 @@ router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => 
   })));
 });
 
+router.get('/stage-one/stat', adminAuthen(['admin']), async (req, res) => {
+  const completedUsers = await User.find({ status: 'completed' })
+    .populate('questions')
+    .select('_id questions')
+    .lean();
+  return res.send({
+    all: completedUsers.length,
+    graded: completedUsers.filter(user => user.questions.stageOne.length === 3).length
+  });
+});
+
 router.get('/stage-one/:id', adminAuthen(['admin', 'stage-1']), async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({
+      _id: req.params.id,
+      status: 'completed'
+    });
+    if (!user) return res.error({ message: 'User not found' });
     const answers = await Question.findById(user.questions);
     return res.send({
       answers: answers.generalQuestions,
@@ -38,7 +53,11 @@ router.put('/stage-one/:id', adminAuthen('stage-1'), async (req, res) => {
   const { pass, note = '' } = req.body;
   const { _id: graderId } = req.admin;
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({
+      _id: req.params.id,
+      status: 'completed'
+    });
+    if (!user) return res.error({ message: 'User not found' });
     const answers = await Question.findById(user.questions);
     const { stageOne } = answers;
     const gradedItemIdx = _.findIndex(stageOne, item => item.grader_id.toString() === graderId.toString());
@@ -74,6 +93,7 @@ router.post('/stage-one/calculate', adminAuthen('admin'), async (req, res) => {
       .lean();
     await Promise.all(completedUsers.map((user) => {
       const { stageOne } = user.questions;
+      console.log(stageOne);
       if (stageOne && stageOne.filter(gradedItem => gradedItem.isPass).length >= 2) {
         return User.findOneAndUpdate({ _id: user._id }, { isPassStageOne: true });
       }
@@ -86,9 +106,49 @@ router.post('/stage-one/calculate', adminAuthen('admin'), async (req, res) => {
 });
 
 router.get('/stage-two', adminAuthen(['admin', 'stage-2']), async (req, res) => {
-  const completedUsers = await User.find({ status: 'completed', isPassStageOne: true })
+  try {
+    const completedUsers = await User.find({ status: 'completed', isPassStageOne: true })
     .sort('-completed_at');
-  return res.send(completedUsers);
+    return res.send(completedUsers);
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+router.put('/stage-two/:id', adminAuthen('stage-2'), async (req, res) => {
+  const { pass, note = '' } = req.body;
+  try {
+    const user = await User.findOne({
+      _id: req.params.id,
+      status: 'completed',
+      isPassStageOne: true
+    });
+    if (!user) return res.error({ message: 'User not found' });
+    user.isPassStageTwo = pass;
+    user.noteStageTwo = note;
+    await user.save();
+    return res.send({ success: true });
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+router.get('/major/:major', adminAuthen(['admin', 'programming', 'designer', 'content', 'marketing']), async (req, res) => {
+  try {
+    const { major } = req.params;
+    if (major !== req.admin.role) {
+      return res.error({ message: 'Role Mismatch' });
+    }
+    const users = await User.find({
+      status: 'completed',
+      isPassStageOne: true,
+      isPassStageTwo: true,
+      major: req.params.major
+    });
+    return res.send(users);
+  } catch (e) {
+    return res.error(e);
+  }
 });
 
 export default router;
