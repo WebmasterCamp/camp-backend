@@ -124,6 +124,7 @@ router.put('/stage-two/:id', adminAuthen('stage-2'), async (req, res) => {
       isPassStageOne: true
     });
     if (!user) return res.error({ message: 'User not found' });
+    user.isJudgeStageTwo = true;
     user.isPassStageTwo = pass;
     user.noteStageTwo = note;
     await user.save();
