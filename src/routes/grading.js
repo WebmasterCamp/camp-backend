@@ -134,6 +134,15 @@ router.put('/stage-two/:id', adminAuthen('stage-2'), async (req, res) => {
   }
 });
 
+router.get('/stage-two/stat', adminAuthen(['admin']), async (req, res) => {
+  const stageOnePassedUsers = await User.find({ status: 'completed', isPassStageOne: true })
+    .lean();
+  return res.send({
+    all: stageOnePassedUsers.length,
+    graded: stageOnePassedUsers.filter(user => user.isJudgeStageTwo).length
+  });
+});
+
 router.get('/major/:major', adminAuthen(['admin', 'programming', 'designer', 'content', 'marketing']), async (req, res) => {
   try {
     const { major } = req.params;

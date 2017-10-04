@@ -16,7 +16,8 @@
     "pm2-dev": "pm2 delete all; pm2-dev start pm2.json",
     "pm2:start": "pm2 start pm2_deploy.json --env production",
     "newclear": "rm -rf node_module && npm i",
-    "genAdmin": "babel-node ./uploads/genAdmin.js"
+    "genAdmin": "babel-node ./uploads/genAdmin.js",
+    "getAnswer": "babel-node ./script/get_answers.js"    
   },
   "repository": {
     "type": "git",

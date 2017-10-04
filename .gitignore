@@ -44,3 +44,7 @@ build
 
 #upload files
 uploads
+
+#csv and txt
+*.csv
+*.txt
