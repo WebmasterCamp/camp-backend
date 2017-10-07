@@ -42,7 +42,8 @@ router.get('/stage-one/:id', adminAuthen(['admin', 'stage-1']), async (req, res)
     const answers = await Question.findById(user.questions);
     return res.send({
       answers: answers.generalQuestions,
-      note: answers.stageOne.find(item => item.grader_id.toString() === req.admin._id.toString())
+      note: answers.stageOne.find(item => item.grader_id.toString() === req.admin._id.toString()),
+      activities: user.activities
     });
   } catch (e) {
     return res.error(e);
