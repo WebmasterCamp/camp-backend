@@ -216,7 +216,7 @@ router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'desi
       isPassStageThree: true,
       major: req.params.major
     });
-    return res.send(interviewCandidateCount);
+    return res.send({ count: interviewCandidateCount });
   } catch (e) {
     return res.error(e);
   }
