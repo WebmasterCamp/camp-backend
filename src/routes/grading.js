@@ -152,21 +152,25 @@ router.get('/stage-two/stat', adminAuthen(['admin']), async (req, res) => {
 });
 
 router.get('/major/:major', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
-  try {
-    const { major } = req.params;
-    if (major !== req.admin.role) {
-      return res.error({ message: 'Role Mismatch' });
+  const { _id: graderId } = req.admin;
+  const { major } = req.params;
+  const completedUsers = await User.find({
+    status: 'completed',
+    isPassStageOne: true,
+    isPassStageTwo: true,
+    major
+  })
+    .sort('-completed_at')
+    .populate('questions')
+    .select('_id questions')
+    .lean();
+  return res.send(completedUsers.map(user => Object.assign(user, {
+    questions: {
+      specialQuestions: user.questions.specialQuestions[major],
+      stageThree: user.questions.stageThree ?
+        user.questions.stageThree.find(item => item.grader_id.toString() === graderId.toString()) : {}
     }
-    const users = await User.find({
-      status: 'completed',
-      isPassStageOne: true,
-      isPassStageTwo: true,
-      major: req.params.major
-    });
-    return res.send(users);
-  } catch (e) {
-    return res.error(e);
-  }
+  })));
 });
 
 router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
