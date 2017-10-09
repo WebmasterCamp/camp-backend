@@ -208,7 +208,10 @@ router.get('/major/:major/:id', adminAuthen(['programming', 'design', 'content',
     if (!user) return res.error({ message: 'User not found' });
     const answers = await Question.findById(user.questions);
     return res.send({
-      answers: answers.specialQuestions[major],
+      answers: major === 'design' ? [
+        ...answers.specialQuestions[major],
+        user.designPortfolio
+      ] : answers.specialQuestions[major],
       note: answers.stageThree.find(item => item.grader_id.toString() === req.admin._id.toString()),
       activities: user.activities
     });
