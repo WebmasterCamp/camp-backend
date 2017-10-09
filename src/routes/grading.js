@@ -192,7 +192,32 @@ router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'desi
   }
 });
 
-router.put('/major/:major/:id', adminAuthen('stage-1'), async (req, res) => {
+router.get('/major/:major/:id', adminAuthen(['programming', 'design', 'content', 'marketing']), async (req, res) => {
+  try {
+    const { major } = req.params;
+    if (major !== req.admin.role) {
+      return res.error({ message: 'Role Mismatch' });
+    }
+    const user = await User.findOne({
+      _id: req.params.id,
+      status: 'completed',
+      isPassStageOne: true,
+      isPassStageTwo: true,
+      major
+    });
+    if (!user) return res.error({ message: 'User not found' });
+    const answers = await Question.findById(user.questions);
+    return res.send({
+      answers: answers.specialQuestions[major],
+      note: answers.stageThree.find(item => item.grader_id.toString() === req.admin._id.toString()),
+      activities: user.activities
+    });
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+router.put('/major/:major/:id', adminAuthen(['programming', 'design', 'content', 'marketing']), async (req, res) => {
   const { pass, note = '' } = req.body;
   const { _id: graderId } = req.admin;
   const { major } = req.params;
