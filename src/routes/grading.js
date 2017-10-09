@@ -109,8 +109,15 @@ router.post('/stage-one/calculate', adminAuthen('admin'), async (req, res) => {
 router.get('/stage-two', adminAuthen(['admin', 'stage-2']), async (req, res) => {
   try {
     const completedUsers = await User.find({ status: 'completed', isPassStageOne: true })
-    .sort('-completed_at');
-    return res.send(completedUsers);
+    .populate('questions')
+    .sort('-completed_at')
+    .lean();
+    return res.send(completedUsers.map(user => ({
+      ...user,
+      questions: {
+        generalQuestions: user.questions.generalQuestions
+      }
+    })));
   } catch (e) {
     return res.error(e);
   }
