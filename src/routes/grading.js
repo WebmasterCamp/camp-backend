@@ -240,7 +240,7 @@ router.get('/major/:major/:id', adminAuthen(['programming', 'design', 'content',
     return res.send({
       answers: major === 'design' ? [
         ...answers.specialQuestions[major],
-        user.designPortfolio
+        { answer: user.designPortfolio }
       ] : answers.specialQuestions[major],
       note: answers.stageThree.find(item => item.grader_id.toString() === req.admin._id.toString()),
       activities: user.activities
