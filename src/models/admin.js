@@ -11,7 +11,7 @@ const schema = new Schema({
     enum: [
       'admin',
       'programming',
-      'designer',
+      'design',
       'content',
       'marketing',
       'stage-1',

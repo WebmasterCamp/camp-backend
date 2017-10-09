@@ -151,7 +151,7 @@ router.get('/stage-two/stat', adminAuthen(['admin']), async (req, res) => {
   });
 });
 
-router.get('/major/:major', adminAuthen(['admin', 'programming', 'designer', 'content', 'marketing']), async (req, res) => {
+router.get('/major/:major', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
   try {
     const { major } = req.params;
     if (major !== req.admin.role) {
@@ -164,6 +164,71 @@ router.get('/major/:major', adminAuthen(['admin', 'programming', 'designer', 'co
       major: req.params.major
     });
     return res.send(users);
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
+  try {
+    const { major } = req.params;
+    if (major !== req.admin.role) {
+      return res.error({ message: 'Role Mismatch' });
+    }
+    const interviewCandidateCount = await User.count({
+      status: 'completed',
+      isPassStageOne: true,
+      isPassStageTwo: true,
+      isPassStageThree: true,
+      major: req.params.major
+    });
+    return res.send(interviewCandidateCount);
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+router.put('/major/:major/:id', adminAuthen('stage-1'), async (req, res) => {
+  const { pass, note = '' } = req.body;
+  const { _id: graderId } = req.admin;
+  const { major } = req.params;
+  try {
+    const user = await User.findOne({
+      status: 'completed',
+      isPassStageOne: true,
+      isPassStageTwo: true,
+      major
+    });
+    if (!user) return res.error({ message: 'User not found' });
+    const answers = await Question.findById(user.questions);
+    const { stageThree } = answers;
+    const gradedItemIdx = _.findIndex(stageThree, item => item.grader_id.toString() === graderId.toString());
+    if (gradedItemIdx !== -1) {
+      answers.stageThree[gradedItemIdx] = {
+        grader_id: graderId,
+        note,
+        isPass: pass
+      };
+    } else {
+      answers.stageThree.push({
+        grader_id: graderId,
+        note,
+        isPass: pass
+      });
+    }
+    const majorToPass = {
+      programming: 2,
+      marketing: 1,
+      content: 1,
+      design: 2
+    };
+    if (answers.stageThree.filter(item => item.isPass).length >= majorToPass[major]) {
+      user.isPassStageThree = true;
+    } else {
+      user.isPassStageThree = false;
+    }
+    await [user.save(), answers.save()];
+    return res.send({ success: true });
   } catch (e) {
     return res.error(e);
   }

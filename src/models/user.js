@@ -104,6 +104,10 @@ const schema = new Schema({
     type: Boolean,
     default: false
   },
+  isPassStageThree: {
+    type: Boolean,
+    default: false
+  },
   grader_id: { type: ObjectId, ref: 'Admin' }
 });
 
