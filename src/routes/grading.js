@@ -5,6 +5,20 @@ import { adminAuthen } from '../middlewares/authenticator';
 
 const router = Router();
 
+const majorToPass = {
+  programming: 2,
+  marketing: 1,
+  content: 1,
+  design: 2
+};
+
+const maximumMajor = {
+  programming: 3,
+  marketing: 2,
+  content: 2,
+  design: 3
+};
+
 router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
   const { _id: graderId } = req.admin;
   const completedUsers = await User.find({ status: 'completed' })
@@ -173,6 +187,22 @@ router.get('/major/:major', adminAuthen(['admin', 'programming', 'design', 'cont
   })));
 });
 
+router.get('/major/:major/stat', adminAuthen(['admin']), async (req, res) => {
+  const completedUsers = await User.find({
+    status: 'completed',
+    isPassStageOne: true,
+    isPassStageTwo: true,
+    major: req.params.major
+  })
+  .populate('questions')
+  .select('_id questions')
+  .lean();
+  return res.send({
+    all: completedUsers.length,
+    graded: completedUsers.filter(user => user.questions.stageThree.length === maximumMajor[req.params.major]).length
+  });
+});
+
 router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
   try {
     const { major } = req.params;
@@ -248,12 +278,6 @@ router.put('/major/:major/:id', adminAuthen(['programming', 'design', 'content',
         isPass: pass
       });
     }
-    const majorToPass = {
-      programming: 2,
-      marketing: 1,
-      content: 1,
-      design: 2
-    };
     if (answers.stageThree.filter(item => item.isPass).length >= majorToPass[major]) {
       user.isPassStageThree = true;
     } else {
