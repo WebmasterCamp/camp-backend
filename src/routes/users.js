@@ -50,32 +50,6 @@ router.get('/stat', async (req, res) => {
   }
 });
 
-router.get('/:id', adminAuthen('admin'), async (req, res) => {
-  const user = await User.findOne({ _id: req.params.id }).populate('questions');
-  return res.send(user);
-});
-
-router.get('/stat/all', adminAuthen('admin'), async (req, res) => {
-  try {
-    const programmingCompleted = User.count({ status: 'completed', major: 'programming' });
-    const designCompleted = User.count({ status: 'completed', major: 'design' });
-    const contentCompleted = User.count({ status: 'completed', major: 'content' });
-    const marketingCompleted = User.count({ status: 'completed', major: 'marketing' });
-    const pendingPromise = User.count({ status: { $ne: 'completed' }, completed: { $ne: [true, true, true, true, true] } });
-    const notConfirmPromise = User.count({ status: { $ne: 'completed' }, completed: [true, true, true, true, true] });
-    const [programming, design, content, marketing, pending, notConfirm] = await Promise.all([programmingCompleted, designCompleted, contentCompleted, marketingCompleted, pendingPromise, notConfirmPromise]);
-    return res.send({
-      programming,
-      design,
-      content,
-      marketing,
-      pending,
-      notConfirm
-    });
-  } catch (err) {
-    return res.error(err);
-  }
-});
 
 router.get('/programming', adminAuthen(['admin', 'programming']), async (req, res) => {
   try {
@@ -120,12 +94,39 @@ router.get('/interview', async (req, res) => {
       isPassStageOne: true,
       isPassStageTwo: true,
       isPassStageThree: true
-    });
+    }).select('_id major firstName lastName firstNameEN lastNameEN nickname completed_at');
     return res.send({
       programming: interviewCandidate.filter(user => user.major === 'programming'),
       design: interviewCandidate.filter(user => user.major === 'design'),
       marketing: interviewCandidate.filter(user => user.major === 'marketing'),
       content: interviewCandidate.filter(user => user.major === 'content')
+    });
+  } catch (err) {
+    return res.error(err);
+  }
+});
+
+router.get('/:id', adminAuthen('admin'), async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id }).populate('questions');
+  return res.send(user);
+});
+
+router.get('/stat/all', adminAuthen('admin'), async (req, res) => {
+  try {
+    const programmingCompleted = User.count({ status: 'completed', major: 'programming' });
+    const designCompleted = User.count({ status: 'completed', major: 'design' });
+    const contentCompleted = User.count({ status: 'completed', major: 'content' });
+    const marketingCompleted = User.count({ status: 'completed', major: 'marketing' });
+    const pendingPromise = User.count({ status: { $ne: 'completed' }, completed: { $ne: [true, true, true, true, true] } });
+    const notConfirmPromise = User.count({ status: { $ne: 'completed' }, completed: [true, true, true, true, true] });
+    const [programming, design, content, marketing, pending, notConfirm] = await Promise.all([programmingCompleted, designCompleted, contentCompleted, marketingCompleted, pendingPromise, notConfirmPromise]);
+    return res.send({
+      programming,
+      design,
+      content,
+      marketing,
+      pending,
+      notConfirm
     });
   } catch (err) {
     return res.error(err);
