@@ -7,16 +7,16 @@ const router = Router();
 
 const majorToPass = {
   programming: 2,
-  marketing: 1,
-  content: 1,
-  design: 2
+  marketing: 2,
+  content: 2,
+  design: 1
 };
 
 const maximumMajor = {
-  programming: 3,
-  marketing: 2,
-  content: 2,
-  design: 3
+  programming: 4,
+  marketing: 3,
+  content: 3,
+  design: 2
 };
 
 router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
