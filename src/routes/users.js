@@ -20,7 +20,7 @@ import slackUtils from '../utilities/slack';
 const router = Router();
 
 router.get('/', adminAuthen('admin'), async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().select('_id major title firstName lastName firstNameEN lastNameEN email nickname completed_at');
   return res.send(users);
 });
 
@@ -95,7 +95,7 @@ router.get('/interview', async (req, res) => {
       isPassStageTwo: true,
       isPassStageThree: true
     })
-    .select('_id major title firstName lastName firstNameEN lastNameEN nickname completed_at')
+    .select('_id major title firstName lastName firstNameEN lastNameEN email nickname completed_at')
     .sort('firstName');
     return res.send({
       programming: interviewCandidate.filter(user => user.major === 'programming'),
