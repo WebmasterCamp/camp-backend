@@ -7,14 +7,14 @@ const router = Router();
 
 const majorToPass = {
   programming: 2,
-  marketing: 2,
+  marketing: 1,
   content: 2,
   design: 1
 };
 
 const maximumMajor = {
   programming: 4,
-  marketing: 3,
+  marketing: 2,
   content: 3,
   design: 2
 };
