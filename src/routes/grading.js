@@ -259,7 +259,8 @@ router.put('/major/:major/:id', adminAuthen(['programming', 'design', 'content',
       status: 'completed',
       isPassStageOne: true,
       isPassStageTwo: true,
-      major
+      major,
+      _id: req.params.id
     });
     if (!user) return res.error({ message: 'User not found' });
     const answers = await Question.findById(user.questions);
