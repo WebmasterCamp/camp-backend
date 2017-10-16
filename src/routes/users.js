@@ -20,7 +20,7 @@ import slackUtils from '../utilities/slack';
 const router = Router();
 
 router.get('/', adminAuthen('admin'), async (req, res) => {
-  const users = await User.find().select('_id major title firstName lastName firstNameEN lastNameEN email nickname completed_at status');
+  const users = await User.find().select('_id major title firstName lastName firstNameEN lastNameEN email nickname completed_at status major');
   return res.send(users);
 });
 
