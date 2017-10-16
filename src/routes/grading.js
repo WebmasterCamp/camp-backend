@@ -89,12 +89,13 @@ router.put('/stage-one/:id', adminAuthen('stage-1'), async (req, res) => {
         isPass: pass
       });
     }
+    let updateUserPromise;
     if (answers.stageOne.filter(item => item.isPass).length >= 2) {
-      user.isPassStageOne = true;
+      updateUserPromise = User.findOneAndUpdate({ _id: user._id }, { isPassStageOne: true });
     } else {
-      user.isPassStageOne = false;
+      updateUserPromise = User.findOneAndUpdate({ _id: user._id }, { isPassStageOne: false });
     }
-    await [user.save(), answers.save()];
+    await [updateUserPromise, answers.save()];
     return res.send({ success: true });
   } catch (e) {
     return res.error(e);
