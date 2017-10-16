@@ -94,7 +94,9 @@ router.get('/interview', async (req, res) => {
       isPassStageOne: true,
       isPassStageTwo: true,
       isPassStageThree: true
-    }).select('_id major firstName lastName firstNameEN lastNameEN nickname completed_at');
+    })
+    .select('_id major title firstName lastName firstNameEN lastNameEN nickname completed_at')
+    .sort('firstName');
     return res.send({
       programming: interviewCandidate.filter(user => user.major === 'programming'),
       design: interviewCandidate.filter(user => user.major === 'design'),
