@@ -57,7 +57,11 @@ router.get('/stage-one/:id', adminAuthen(['admin', 'stage-1']), async (req, res)
     return res.send({
       answers: answers.generalQuestions,
       note: answers.stageOne.find(item => item.grader_id.toString() === req.admin._id.toString()),
-      activities: user.activities
+      activities: user.activities,
+      academicYear: user.academicYear,
+      faculty: user.faculty,
+      department: user.department,
+      university: user.university
     });
   } catch (e) {
     return res.error(e);
@@ -243,7 +247,11 @@ router.get('/major/:major/:id', adminAuthen(['programming', 'design', 'content',
         { answer: user.designPortfolio }
       ] : answers.specialQuestions[major],
       note: answers.stageThree.find(item => item.grader_id.toString() === req.admin._id.toString()),
-      activities: user.activities
+      activities: user.activities,
+      academicYear: user.academicYear,
+      faculty: user.faculty,
+      department: user.department,
+      university: user.university
     });
   } catch (e) {
     return res.error(e);
