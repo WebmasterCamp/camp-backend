@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import _ from 'lodash';
-import { User, Question } from '../models';
+import { Admin, User, Question } from '../models';
 import { adminAuthen } from '../middlewares/authenticator';
 
 const router = Router();
@@ -12,12 +12,12 @@ const majorToPass = {
   design: 1
 };
 
-const maximumMajor = {
-  programming: 4,
-  marketing: 2,
-  content: 3,
-  design: 2
-};
+// const maximumMajor = {
+//   programming: 4,
+//   marketing: 2,
+//   content: 3,
+//   design: 2
+// };
 
 router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
   const { _id: graderId } = req.admin;
@@ -36,13 +36,32 @@ router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => 
 });
 
 router.get('/stage-one/stat', adminAuthen(['admin']), async (req, res) => {
-  const completedUsers = await User.find({ status: 'completed' })
+  const completedUsersPromise = User.find({ status: 'completed' })
     .populate('questions')
     .select('_id questions')
     .lean();
+  const gradersPromise = Admin.find({ role: 'stage-1' });
+  const [completedUsers, graders] = await Promise.all([completedUsersPromise, gradersPromise]);
+  const graderIdMapping = graders.reduce((prev, curr) => {
+    prev[curr._id] = curr.username;
+    return prev;
+  }, {});
+  const groupedByGraderId = graders.reduce((prev, curr) => {
+    prev[curr._id] = [];
+    return prev;
+  }, {});
+  completedUsers.reduce((prev, curr) => {
+    curr.questions.stageOne.forEach(item => {
+      groupedByGraderId[item.grader_id] = [...groupedByGraderId[item.grader_id], item];
+    });
+  });
+  const gradersStat = Object.keys(groupedByGraderId).reduce((prev, graderId) => {
+    prev[graderIdMapping[graderId]] = groupedByGraderId[graderId].length;
+    return prev;
+  }, {});
   return res.send({
     all: completedUsers.length,
-    graded: completedUsers.filter(user => user.questions.stageOne.length === 3).length
+    graded: gradersStat
   });
 });
 
@@ -112,7 +131,7 @@ router.post('/stage-one/calculate', adminAuthen('admin'), async (req, res) => {
       .lean();
     await Promise.all(completedUsers.map((user) => {
       const { stageOne } = user.questions;
-      console.log(stageOne);
+      // console.log(stageOne);
       if (stageOne && stageOne.filter(gradedItem => gradedItem.isPass).length >= 2) {
         return User.findOneAndUpdate({ _id: user._id }, { isPassStageOne: true });
       }
@@ -192,7 +211,7 @@ router.get('/major/:major', adminAuthen(['admin', 'programming', 'design', 'cont
 });
 
 router.get('/major/:major/stat', adminAuthen(['admin']), async (req, res) => {
-  const completedUsers = await User.find({
+  const completedUsersPromise = User.find({
     status: 'completed',
     isPassStageOne: true,
     isPassStageTwo: true,
@@ -201,9 +220,28 @@ router.get('/major/:major/stat', adminAuthen(['admin']), async (req, res) => {
   .populate('questions')
   .select('_id questions')
   .lean();
+  const gradersPromise = Admin.find({ role: req.params.major });
+  const [completedUsers, graders] = await Promise.all([completedUsersPromise, gradersPromise]);
+  const graderIdMapping = graders.reduce((prev, curr) => {
+    prev[curr._id] = curr.username;
+    return prev;
+  }, {});
+  const groupedByGraderId = graders.reduce((prev, curr) => {
+    prev[curr._id] = [];
+    return prev;
+  }, {});
+  completedUsers.reduce((prev, curr) => {
+    curr.questions.stageThree.forEach(item => {
+      groupedByGraderId[item.grader_id] = [...groupedByGraderId[item.grader_id], item];
+    });
+  });
+  const gradersStat = Object.keys(groupedByGraderId).reduce((prev, graderId) => {
+    prev[graderIdMapping[graderId]] = groupedByGraderId[graderId].length;
+    return prev;
+  }, {});
   return res.send({
     all: completedUsers.length,
-    graded: completedUsers.filter(user => user.questions.stageThree.length === maximumMajor[req.params.major]).length
+    graded: gradersStat
   });
 });
 
