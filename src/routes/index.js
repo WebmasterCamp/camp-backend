@@ -11,6 +11,7 @@ import auth from './auth';
 // import member from './member';
 import registration from './registration';
 import grading from './grading';
+import file from './file';
 
 const router = Router();
 router.get('/', (req, res) => {
@@ -27,5 +28,6 @@ router.use('/auth', auth);
 // router.use('/member', member);
 router.use('/registration', registration);
 router.use('/grading', grading);
+router.use('/files', file);
 
 export default router;

@@ -17,7 +17,7 @@
     "pm2:start": "pm2 start pm2_deploy.json --env production",
     "newclear": "rm -rf node_module && npm i",
     "genAdmin": "babel-node ./uploads/genAdmin.js",
-    "getAnswer": "babel-node ./script/get_answers.js"    
+    "getAnswer": "babel-node ./script/get_answers.js"
   },
   "repository": {
     "type": "git",
@@ -48,6 +48,7 @@
     "express-session": "^1.14.0",
     "express-validator": "^2.20.8",
     "fb": "^2.0.0",
+    "html-pdf": "^2.2.0",
     "jsonwebtoken": "^7.1.9",
     "lodash": "^4.15.0",
     "lusca": "^1.4.1",
