@@ -13,7 +13,7 @@ User
     const data = users
       .filter(user => user.email)
       .map(user => `${user.firstName} ${user.lastName}, ${user.email}, ${user.phone}`).join('\n');
-    console.log(data);
+    // console.log(data);
     return data;
   })
   .then((data) => {
