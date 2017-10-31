@@ -39,9 +39,10 @@ router.get('/stat', async (req, res) => {
 
 router.get('/by-day-stat', adminAuthen('admin'), async (req, res) => {
   try {
+    const { sort = 'desc' } = req.query;
     const statistics = await User.aggregate([
       { $match: { status: 'completed' } },
-      { $sort: { completed_at: 1 } },
+      { $sort: { completed_at: sort === 'desc' ? -1 : 1 } },
       { $project: { dateString: { $dateToString: { format: '%Y-%m-%d', date: '$completed_at' } } } },
       { $group: { _id: '$dateString', count: { $sum: 1 } } }
     ]);
