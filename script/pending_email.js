@@ -8,6 +8,7 @@ mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.M
 
 User
   .find({ status: 'in progress' })
+  // .find({ status: 'in progress', completed: [true, true, true, true, true] })
   .select('firstName lastName email phone')
   .then((users) => {
     const data = users

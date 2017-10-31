@@ -1,21 +1,8 @@
 import { Router } from 'express';
-import {
-  validateUserStep1,
-  validateUserStep2,
-  validateUserStep3,
-  validateUserStep4,
-  validateUserStep5,
-  isAuthenticated,
-  hasFile,
-  requireRoles
-} from '../middlewares';
+import moment from 'moment';
 import { authen, adminAuthen } from '../middlewares/authenticator';
-import { respondResult, respondErrors } from '../utilities';
-import { getUserInfoFromToken } from '../services';
-import { User, Question } from '../models';
-import { singleUpload } from '../middlewares';
-import _ from 'lodash';
-import slackUtils from '../utilities/slack';
+import { User } from '../models';
+// import slackUtils from '../utilities/slack';
 
 const router = Router();
 
@@ -50,6 +37,23 @@ router.get('/stat', async (req, res) => {
   }
 });
 
+router.get('/by-day-stat', adminAuthen('admin'), async (req, res) => {
+  try {
+    const statistics = await User.aggregate([
+      { $match: { status: 'completed' } },
+      { $sort: { completed_at: 1 } },
+      { $project: { dateString: { $dateToString: { format: '%Y-%m-%d', date: '$completed_at' } } } },
+      { $group: { _id: '$dateString', count: { $sum: 1 } } }
+    ]);
+    return res.send(statistics.sort((a, b) => {
+      if (moment(a._id, 'YYYY-MM-DD').isBefore(moment(b._id, 'YYYY-MM-DD'))) return -1;
+      else if (moment(a._id, 'YYYY-MM-DD').isSame(moment(b._id, 'YYYY-MM-DD'))) return 0;
+      return 1;
+    }));
+  } catch (e) {
+    return res.error(e);
+  }
+});
 
 router.get('/programming', adminAuthen(['admin', 'programming']), async (req, res) => {
   try {
