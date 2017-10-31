@@ -42,14 +42,14 @@ router.get('/by-day-stat', adminAuthen('admin'), async (req, res) => {
     const { sort = 'desc' } = req.query;
     const statistics = await User.aggregate([
       { $match: { status: 'completed' } },
-      { $sort: { completed_at: sort === 'desc' ? -1 : 1 } },
+      { $sort: { completed_at: 1 } },
       { $project: { dateString: { $dateToString: { format: '%Y-%m-%d', date: '$completed_at' } } } },
       { $group: { _id: '$dateString', count: { $sum: 1 } } }
     ]);
     return res.send(statistics.sort((a, b) => {
-      if (moment(a._id, 'YYYY-MM-DD').isBefore(moment(b._id, 'YYYY-MM-DD'))) return -1;
+      if (moment(a._id, 'YYYY-MM-DD').isBefore(moment(b._id, 'YYYY-MM-DD'))) return sort === 'desc' ? 1 : -1;
       else if (moment(a._id, 'YYYY-MM-DD').isSame(moment(b._id, 'YYYY-MM-DD'))) return 0;
-      return 1;
+      return sort === 'desc' ? -1 : 1;
     }));
   } catch (e) {
     return res.error(e);
