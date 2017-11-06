@@ -108,7 +108,8 @@ const schema = new Schema({
     type: Boolean,
     default: false
   },
-  grader_id: { type: ObjectId, ref: 'Admin' }
+  grader_id: { type: ObjectId, ref: 'Admin' },
+  interviewRef: String
 });
 
 export default mongoose.model('User', schema);
