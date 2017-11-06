@@ -48,3 +48,6 @@ uploads
 #csv and txt
 *.csv
 *.txt
+
+#interview generated pdf
+interview/
