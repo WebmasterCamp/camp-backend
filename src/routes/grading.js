@@ -230,9 +230,9 @@ router.get('/major/:major/stat', adminAuthen(['admin']), async (req, res) => {
     prev[curr._id] = [];
     return prev;
   }, {});
-  completedUsers.reduce((prev, curr) => {
-    curr.questions.stageThree.forEach(item => {
-      groupedByGraderId[item.grader_id] = [...groupedByGraderId[item.grader_id], item];
+  completedUsers.forEach(user => {
+    user.questions.stageThree.forEach(gradedItem => {
+      groupedByGraderId[gradedItem.grader_id] = [...groupedByGraderId[gradedItem.grader_id], gradedItem];
     });
   });
   const gradersStat = Object.keys(groupedByGraderId).reduce((prev, graderId) => {
