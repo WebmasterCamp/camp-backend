@@ -22,9 +22,10 @@ Promise.all(
       User.findOne(_.omit(query, 'filename'))
         .then(user => {
           // user.designPortfolio = `uploads/file/eCT30By1-1504793289563.pdf`;
+          // console.log(user.firstNameEN, query.firstNameEN.$regex);
           return Question.findOne({ _id: user.questions }).then(question => {
-            console.log(user.firstNameEN, question.stageThree);
-            user.designPortfolio = query.filename;
+            // console.log(user.firstNameEN, question.stageThree, query.filename);
+            user.designPortfolio = `uploads/file/${query.filename}`;
             question.stageThree = [];
             return Promise.all([user.save(), question.save()]);
           });

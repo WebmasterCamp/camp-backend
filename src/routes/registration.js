@@ -3,6 +3,7 @@ import { authen } from '../middlewares/authenticator';
 import { validateRegistrationStep, majorQuestionValidator } from '../middlewares/validator';
 import { User, Question } from '../models';
 import { singleUpload } from '../middlewares';
+import { closeAfterDeadline } from '../middlewares/deadline';
 
 const updateRegisterStep = async (id, step) => {
   const user = await User.findOne({ _id: id });
@@ -14,7 +15,7 @@ const updateRegisterStep = async (id, step) => {
 const router = Router();
 
 // STEP 1: Personal Info
-router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateRegistrationStep[0], async (req, res) => {
+router.put('/step1', closeAfterDeadline, authen('in progress'), singleUpload('profilePic', 'jpg', 'png', 'jpeg'), validateRegistrationStep[0], async (req, res) => {
   try {
     const { _id } = req.user;
     const user = await User.findOne({ _id });
@@ -51,7 +52,7 @@ router.put('/step1', authen('in progress'), singleUpload('profilePic', 'jpg', 'p
 });
 
 // STEP 2: Contact Info and ETC
-router.put('/step2', authen('in progress'), validateRegistrationStep[1], async (req, res) => {
+router.put('/step2', closeAfterDeadline, authen('in progress'), validateRegistrationStep[1], async (req, res) => {
   try {
     const { _id } = req.user;
     const user = await User.findOne({ _id });
@@ -83,7 +84,7 @@ router.put('/step2', authen('in progress'), validateRegistrationStep[1], async (
 });
 
 // STEP 3: Portfolio and How did you know YWC?
-router.put('/step3', authen('in progress'), validateRegistrationStep[2], async (req, res) => {
+router.put('/step3', closeAfterDeadline, authen('in progress'), validateRegistrationStep[2], async (req, res) => {
   try {
     const { _id } = req.user;
     const user = await User.findOne({ _id });
@@ -102,7 +103,7 @@ router.put('/step3', authen('in progress'), validateRegistrationStep[2], async (
 });
 
 // STEP 4: General Question
-router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (req, res) => {
+router.put('/step4', closeAfterDeadline, authen('in progress'), validateRegistrationStep[3], async (req, res) => {
   try {
     // TO CHECK: If role as affect on general question -> check role
     const { answers } = req.body;
@@ -118,7 +119,7 @@ router.put('/step4', authen('in progress'), validateRegistrationStep[3], async (
 });
 
 // STEP 5: Major Question
-router.put('/step5', authen('in progress'), singleUpload('file', 'pdf'), validateRegistrationStep[4], majorQuestionValidator, async (req, res) => {
+router.put('/step5', closeAfterDeadline, authen('in progress'), singleUpload('file', 'pdf'), validateRegistrationStep[4], majorQuestionValidator, async (req, res) => {
   try {
     const { answers, major } = req.body;
     const { _id } = req.user;
@@ -146,7 +147,7 @@ router.put('/step5', authen('in progress'), singleUpload('file', 'pdf'), validat
   }
 });
 
-router.post('/confirm', authen('in progress'), async (req, res) => {
+router.post('/confirm', closeAfterDeadline, authen('in progress'), async (req, res) => {
   try {
     const { _id } = req.user;
     const user = await User.findOne({ _id }).populate('questions');
