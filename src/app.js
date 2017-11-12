@@ -9,8 +9,10 @@ import flash from 'express-flash';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import config from 'config';
+import http from 'http';
 import routes from './routes';
 import { validator } from './middlewares';
+import { Queue } from './models';
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -21,6 +23,29 @@ mongoose.connection.on('error', () => {
 });
 
 const app = express();
+const ioServer = http.createServer();
+const io = require('socket.io')(ioServer);
+ioServer.listen(process.env.IO_PORT, () => console.log(`IO Port listening on ${process.env.IO_PORT}`));
+
+const sendCurrentQueue = () => (
+  Promise.all([
+    Queue.findOne({ major: 'design' }),
+    Queue.findOne({ major: 'programming' }),
+    Queue.findOne({ major: 'marketing' }),
+    Queue.findOne({ major: 'content' })
+  ])
+  .then(([design, programming, marketing, content]) => (
+    io.emit('queue', {
+      design: design.order,
+      programming: programming.order,
+      marketing: marketing.order,
+      content: content.order
+    })
+  ))
+);
+
+io.on('connection', sendCurrentQueue);
+
 app.use(compression());
 app.use(logger('dev'));
 app.use(bodyParser.json({ extended: true, limit: '6mb' }));
@@ -46,6 +71,10 @@ app.use(flash());
 // });
 app.use((req, res, next) => {
   res.error = (e) => res.status(500).send(e);
+  next();
+});
+app.use((req, res, next) => {
+  req.ioSendQueue = sendCurrentQueue;
   next();
 });
 app.use(lusca.xframe('SAMEORIGIN'));

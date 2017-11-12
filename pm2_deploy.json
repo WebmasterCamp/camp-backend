@@ -8,24 +8,19 @@
       "env_staging": {
         "name": "api-staging",
         "PORT": "5554",
+        "IO_PORT": 11999,
         "NODE_ENV": "staging"
       },
       "env_production" : {
         "name": "api-production",
         "PORT": "5555",
+        "IO_PORT": 12000,
         "NODE_ENV": "production",
         "instances": "max"
       },
       "error_file": "./pm2/logs/ywc-register-backend-api.err.log",
       "out_file": "./pm2/logs/ywc-register-backend-api.out.log",
       "log_date_format": "YYYY-MM-DD HH:mm Z"
-    },
-    {
-      "name": "ywc15-cron",
-      "script": "./build/cron.js",
-      "env": {
-        "NODE_ENV": "production"
-      }
     }
   ]
 }
