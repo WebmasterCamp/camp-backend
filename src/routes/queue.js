@@ -4,6 +4,7 @@ import { Queue } from '../models';
 const router = Router();
 
 router.get('/:major', async (req, res) => {
+  console.log('come to me');
   const { major } = req.params;
   try {
     const majorQueue = await Queue.findOne({ major });
