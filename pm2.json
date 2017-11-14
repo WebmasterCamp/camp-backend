@@ -7,6 +7,7 @@
       "interpreter": "./node_modules/.bin/babel-node",
       "env": {
         "PORT": 3001,
+        "IO_PORT": 3002,
         "NODE_ENV": "development"
       },
       "error_file": "./pm2/logs/ywc-register-backend-api.err.log",

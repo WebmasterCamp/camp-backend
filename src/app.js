@@ -11,6 +11,7 @@ import cors from 'cors';
 import config from 'config';
 import routes from './routes';
 import { validator } from './middlewares';
+import { Queue } from './models';
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -21,6 +22,10 @@ mongoose.connection.on('error', () => {
 });
 
 const app = express();
+// ioServer.listen(process.env.IO_PORT, () => console.log(`IO Port listening on ${process.env.IO_PORT}`));
+// app.start = app.listen = () => {
+//   return server.listen.apply(server, arguments);
+// };
 app.use(compression());
 app.use(logger('dev'));
 app.use(bodyParser.json({ extended: true, limit: '6mb' }));
