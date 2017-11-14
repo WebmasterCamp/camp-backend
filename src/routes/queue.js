@@ -3,11 +3,16 @@ import { Queue } from '../models';
 
 const router = Router();
 
-router.get('/:major', async (req, res) => {
+router.post('/:major', async (req, res) => {
   const { major } = req.params;
+  const { isDecrease = false } = req.body;
   try {
     const majorQueue = await Queue.findOne({ major });
-    majorQueue.order += 1;
+    if (isDecrease) {
+      majorQueue.order -= 1;
+    } else {
+      majorQueue.order += 1;
+    }
     await majorQueue.save();
     req.ioSendQueue();
     return res.send({ success: true });
