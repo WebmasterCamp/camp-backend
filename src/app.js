@@ -11,7 +11,6 @@ import cors from 'cors';
 import config from 'config';
 import routes from './routes';
 import { validator } from './middlewares';
-import { Queue } from './models';
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
