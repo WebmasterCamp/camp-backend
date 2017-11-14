@@ -6,7 +6,7 @@ import { adminAuthen } from '../middlewares/authenticator';
 const router = Router();
 
 const majorToPass = {
-  programming: 2,
+  programming: 3,
   marketing: 1,
   content: 2,
   design: 1
