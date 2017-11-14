@@ -12,12 +12,12 @@ const majorToPass = {
   design: 1
 };
 
-// const maximumMajor = {
-//   programming: 4,
-//   marketing: 2,
-//   content: 3,
-//   design: 2
-// };
+const maximumMajor = {
+  programming: 4,
+  marketing: 2,
+  content: 3,
+  design: 2
+};
 
 router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
   const { _id: graderId } = req.admin;
@@ -332,6 +332,37 @@ router.put('/major/:major/:id', adminAuthen(['programming', 'design', 'content',
     }
     await [user.save(), answers.save()];
     return res.send({ success: true });
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
+router.get('/criteria-analyze', adminAuthen('admin'), async (req, res) => {
+  try {
+    const queryCreator = major => User.find({
+      status: 'completed',
+      isPassStageOne: true,
+      isPassStageTwo: true,
+      major
+    })
+      .populate('questions', 'stageThree')
+      .select('questions')
+      .then(users => users.map(user => user.questions.stageThree.filter(graded => graded.isPass).length))
+      .then(stats => _.range(0, maximumMajor[major] + 1)
+        .map(passCount => stats.filter(stat => stat === passCount).length)
+      );
+    const [programming, marketing, design, content] = await Promise.all([
+      queryCreator('programming'),
+      queryCreator('marketing'),
+      queryCreator('design'),
+      queryCreator('content')
+    ]);
+    return res.send({
+      programming,
+      marketing,
+      design,
+      content
+    });
   } catch (e) {
     return res.error(e);
   }
