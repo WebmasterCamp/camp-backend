@@ -29,7 +29,7 @@ const renderName = user => `
     <div class="col" style="padding-left: 10px;">
       <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${user.nickname})</h1>
       <h1><b>สาขา:</b> ${majorAsText(user.major)}</h1>
-      <h1>Ref: M01</h1>
+      <h1>Ref: ${user.interviewRef}</h1>
     </div>
   </div>
 `;
@@ -87,7 +87,7 @@ const renderMoreInfo = user => `
 
 const renderActivity = user => `
   <div>
-    <h1>กิจกรรมและความสามารถพืเศษ</h1>
+    <h1>กิจกรรมและความสามารถพิเศษ</h1>
     <p class="answer">${user.activities}</p>
   </div>
 `;
@@ -96,7 +96,7 @@ const renderGeneralQuestion = answers => `
   <div>
     <h1>คำถามส่วนกลาง</h1>
     ${answers.generalQuestions.map((answer, idx) => (`
-      <p><b>${(idx + 1)}.${question.generalQuestions[idx]}</b></p>
+      <p class="question"><b>${(idx + 1)}.${question.generalQuestions[idx]}</b></p>
       <p class="answer">${answer.answer}</p>
     `)).join('<br>')}
   </div>
@@ -106,7 +106,7 @@ const renderMajorQuestion = (answers, major) => `
   <div>
     <h1>คำถามสาขา</h1>
     ${answers.specialQuestions[major].map((answer, idx) => (`
-      <p><b>${(idx + 1)}.${question.specialQuestions[major][idx]}</b></p>
+      <p class="question"><b>${(idx + 1)}.${question.specialQuestions[major][idx]}</b></p>
       <p class="answer ${major === 'programming' && idx === 3 ? 'code' : ''}">${answer.answer}</p>
     `)).join('<br>')}
   </div>
@@ -114,9 +114,6 @@ const renderMajorQuestion = (answers, major) => `
 
 const generatePdf = user => `
 <html>
-<head>
-  <link href="https://fonts.googleapis.com/css?family=Trirong:400,700" rel="stylesheet">
-</head>
 <body>
   ${renderName(user)}
   <br>
@@ -125,9 +122,9 @@ const generatePdf = user => `
   ${renderMoreInfo(user)}
   <br>
   ${renderActivity(user)}
-  <br>
+  <div class="border" />
   ${renderGeneralQuestion(user.questions)}
-  <br>
+  <div class="border" />
   ${renderMajorQuestion(user.questions, user.major)}
   <style>html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select,textarea{margin:0}html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}img,embed,iframe,object,audio,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0;text-align:left}</style>
   <style>
@@ -150,11 +147,14 @@ const generatePdf = user => `
       font-size: 12px;
       line-height: 16px;
     }
+    hr { padding: 5px 0; }
     h1, b { font-weight: bold; }
     h1 { font-size: 14px; margin-bottom: 2px; }
     .user-img { width: 50px; height: 50px; background-size: cover; background-position: 50%; border: none; }
+    .question { font-size: 13px;}
     .answer { white-space: pre-line; }
-    .answer.code { font-family: Monospace; white-space: pre; }
+    .answer.code { white-space: pre; font-size: 10px; }
+    .border { border-top: 1px solid black; padding: 10px 0; height: 1px; }
     .row {
       display: -webkit-box;
       display: -webkit-flex;
@@ -185,7 +185,7 @@ const generatePdf = user => `
 `;
 
 const createPDFPromise = user => new Promise((resolve, reject) => (
-  pdf.create(generatePdf(user), pdfOption).toFile(`interview/${user.major}/${user._id}.pdf`, (err, info) => {
+  pdf.create(generatePdf(user), pdfOption).toFile(`interview/${user.major}/${user.interviewRef}.pdf`, (err, info) => {
     if (err) return reject(err);
     return resolve(info);
   }
@@ -196,9 +196,17 @@ const createPDFPromise = user => new Promise((resolve, reject) => (
     status: 'completed',
     isPassStageOne: true,
     isPassStageTwo: true,
-    isPassStageThree: true
+    isPassStageThree: true,
+    interviewRef: { $exists: true },
+    major: 'programming'
   })
-  .populate('questions');
-  await Promise.all(users.map(user => createPDFPromise(user)));
+  .populate('questions')
+  .sort('interviewRef');
+  console.log(users.length);
+  // await createPDFPromise(users);
+  for (const user of users) {
+    await createPDFPromise(user);
+    console.log(`Done for ${user.interviewRef}`);
+  }
   console.log('DONE');
 })();
