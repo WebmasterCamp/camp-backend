@@ -197,8 +197,7 @@ const createPDFPromise = user => new Promise((resolve, reject) => (
     isPassStageOne: true,
     isPassStageTwo: true,
     isPassStageThree: true,
-    interviewRef: { $exists: true },
-    major: 'programming'
+    interviewRef: { $exists: true }
   })
   .populate('questions')
   .sort('interviewRef');

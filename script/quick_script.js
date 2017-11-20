@@ -13,10 +13,20 @@ mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.M
     status: 'completed',
     isPassStageOne: true,
     isPassStageTwo: true,
-    major: 'marketing'
-  }).populate('questions');
-  const x = users.map(user => user.questions.stageThree.filter(item => item.isPass).length);
+    isPassStageThree: false,
+    major: 'content'
+  })
+  .populate('questions')
+  .sort('completed_at')
+  const x = users
+    .map(user => Object.assign(user,
+      {
+        pPong: user.questions.stageThree.filter(item => item.grader_id.toString() === '59e06bc47d0f5a6f21a6c301' && item.isPass)
+      }
+    ))
+    .map(user => user._id)
   console.log(x);
+  fs.writeFileSync('dummy.txt', x.join('\n'));
   // for (const user of users) {
     // const question = await Question.findOne({ _id: user.questions });
     // const { stageThree } = question;
