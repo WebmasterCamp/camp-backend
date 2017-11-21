@@ -5,6 +5,16 @@ import { adminAuthen } from '../middlewares/authenticator';
 
 const router = Router();
 
+router.get('/:major', adminAuthen('queue'), async (req, res) => {
+  const { major } = req.params;
+  try {
+    const majorQueue = await Queue.findOne({ major });
+    return res.send(majorQueue);
+  } catch (e) {
+    return res.error(e);
+  }
+});
+
 router.post('/:major', adminAuthen('queue'), async (req, res) => {
   const { major } = req.params;
   const { isDecrease = false } = req.body;
