@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { Queue } from '../models';
 
+import { adminAuthen } from '../middlewares/authenticator';
+
 const router = Router();
 
-router.post('/:major', async (req, res) => {
+router.post('/:major', adminAuthen('queue'), async (req, res) => {
   const { major } = req.params;
   const { isDecrease = false } = req.body;
   try {

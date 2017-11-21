@@ -15,7 +15,8 @@ const schema = new Schema({
       'content',
       'marketing',
       'stage-1',
-      'stage-2'
+      'stage-2',
+      'queue'
     ]
   }
 });
