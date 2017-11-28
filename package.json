@@ -58,6 +58,7 @@
     "mongoose": "^4.5.9",
     "morgan": "^1.7.0",
     "multer": "^1.2.0",
+    "papaparse": "^4.3.6",
     "passport": "^0.3.2",
     "passport-facebook-token": "^3.3.0",
     "randomstring": "^1.1.5",

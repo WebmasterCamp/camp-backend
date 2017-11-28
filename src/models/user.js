@@ -109,7 +109,9 @@ const schema = new Schema({
     default: false
   },
   grader_id: { type: ObjectId, ref: 'Admin' },
-  interviewRef: String
+  interviewRef: String,
+  isFinalist: Boolean,
+  isFinalistBackup: Boolean
 });
 
 export default mongoose.model('User', schema);
