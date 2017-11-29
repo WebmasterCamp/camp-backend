@@ -10,7 +10,7 @@ import Papa from 'papaparse';
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI);
 
-const queryPromise = major => User.find({ isFinalist: true, major })
+const queryPromise = major => User.find({ isFinalistBackup: true, major })
   .select('interviewRef firstName lastName nickname phone email shirtSize')
   .sort('firstName')
   .lean()
@@ -18,10 +18,11 @@ const queryPromise = major => User.find({ isFinalist: true, major })
     fields: ['interviewRef', 'firstName', 'lastName', 'nickname', 'phone', 'email', 'shirtSize'],
     data: users
   }))
-  .then(data => writeFileSync(`finalist/${major}.csv`, data, { encoding: 'utf-8' }));
+  .then(data => writeFileSync(`finalist/backup/${major}.csv`, data, { encoding: 'utf-8' }));
 
 Promise.all([
   queryPromise('programming'),
   queryPromise('design'),
-  queryPromise('marketing')
+  queryPromise('marketing'),
+  queryPromise('content')
 ]).then(() => console.log('done'));
