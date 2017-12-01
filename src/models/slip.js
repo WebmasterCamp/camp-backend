@@ -7,7 +7,8 @@ const schema = new Schema({
   transfer_money: { type: String, required: true },
   status: { type: String, default: 'pending' },
   file_path: { type: String },
-  no: String
+  no: String,
+  transfer_at: String
 });
 
 export default mongoose.model('Slip', schema);
