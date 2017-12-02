@@ -6,7 +6,7 @@ import { Slip } from '../models';
 
 const router = Router();
 
-router.get('/slip', adminAuthen('admin'), async (req, res) => {
+router.get('/slip', adminAuthen(['admin', 'slips']), async (req, res) => {
   try {
     const slips = await Slip.find();
     return res.send(slips);
@@ -29,7 +29,7 @@ router.post('/slip', singleUpload('slip', 'jpg', 'png', 'jpeg'), async (req, res
   }
 });
 
-router.post('/slip/:id/approve', adminAuthen('admin'), async (req, res) => {
+router.post('/slip/:id/approve', adminAuthen(['admin', 'slips']), async (req, res) => {
   try {
     const slip = await Slip.findOne({ _id: req.params.id });
     if (!slip) return res.error('Slip not found');

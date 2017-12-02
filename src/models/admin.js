@@ -16,7 +16,8 @@ const schema = new Schema({
       'marketing',
       'stage-1',
       'stage-2',
-      'queue'
+      'queue',
+      'slips'
     ]
   }
 });
