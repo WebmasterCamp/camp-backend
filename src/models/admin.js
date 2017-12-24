@@ -17,7 +17,8 @@ const schema = new Schema({
       'stage-1',
       'stage-2',
       'queue',
-      'slips'
+      'slips',
+      'score'
     ]
   }
 });

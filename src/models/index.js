@@ -6,3 +6,4 @@ export Admin from './admin';
 export Affiliate from './affiliate';
 export Slip from './slip';
 export Queue from './queue';
+export Score from './score';
