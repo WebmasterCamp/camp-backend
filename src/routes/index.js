@@ -14,6 +14,7 @@ import grading from './grading';
 import file from './file';
 import queue from './queue';
 import finalists from './finalists';
+import score from './score';
 
 const router = Router();
 router.get('/', (req, res) => {
@@ -33,5 +34,6 @@ router.use('/grading', grading);
 router.use('/files', file);
 router.use('/queues', queue);
 router.use('/finalists', finalists);
+router.use('/scores', score);
 
 export default router;
