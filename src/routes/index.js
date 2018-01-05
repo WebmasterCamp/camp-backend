@@ -16,6 +16,9 @@ import queue from './queue';
 import finalists from './finalists';
 import score from './score';
 
+import timerClientConfig from './timer-client';
+import timerServerConfig from './timer-server';
+
 const router = Router();
 router.get('/', (req, res) => {
   res.status(200).send({ status: 'YWC API Server is running!' });
@@ -35,5 +38,13 @@ router.use('/files', file);
 router.use('/queues', queue);
 router.use('/finalists', finalists);
 router.use('/scores', score);
+
+router.get('/timer/client', (req, res) => {
+  res.send(timerClientConfig);
+});
+
+router.get('/timer/server', (req, res) => {
+  res.send(timerServerConfig);
+});
 
 export default router;
