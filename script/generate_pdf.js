@@ -1,15 +1,17 @@
-import mongoose from 'mongoose';
-import { User } from '../src/models';
-import config from 'config';
-import pdf from 'html-pdf';
-import moment from 'moment';
-import 'moment/locale/th';
+import mongoose from 'mongoose'
+import { User } from '../src/models'
+import config from 'config'
+import pdf from 'html-pdf'
+import moment from 'moment'
+import 'moment/locale/th'
 
-mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI);
+mongoose.Promise = global.Promise
+mongoose.connect(
+  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+)
 
-import question from '../src/routes/static-question';
-import { majorAsText } from '../src/utilities/helpers';
+import question from '../src/routes/static-question'
+import { majorAsText } from '../src/utilities/helpers'
 
 const pdfOption = {
   format: 'A4',
@@ -17,22 +19,26 @@ const pdfOption = {
     top: '0.8in',
     right: '0.6in',
     bottom: '0.8in',
-    left: '0.6in'
-  }
-};
+    left: '0.6in',
+  },
+}
 
 const renderName = user => `
   <div class="row">
     <div>
-      <img class="user-img" style="background-image: url('https://api.ywc15.ywc.in.th/${user.picture}');" />
+      <img class="user-img" style="background-image: url('https://api.ywc15.ywc.in.th/${
+        user.picture
+      }');" />
     </div>
     <div class="col" style="padding-left: 10px;">
-      <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${user.nickname})</h1>
+      <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${
+  user.nickname
+})</h1>
       <h1><b>สาขา:</b> ${majorAsText(user.major)}</h1>
       <h1>Ref: ${user.interviewRef}</h1>
     </div>
   </div>
-`;
+`
 
 const renderAcademicProfile = user => `
   <div class="col">
@@ -42,26 +48,29 @@ const renderAcademicProfile = user => `
     <p><b>สาขาวิชา:</b> ${user.department}</p>
     <p><b>สถาบัน:</b> ${user.university}</p>
   </div>
-`;
+`
 
 const renderContact = user => `
   <div class="col">
     <h1>ข้อมูลติดต่อ</h1>
-    <p><b>ที่อยู่:</b> ${user.address} จังหวัด${user.province} ${user.postalCode}</p>
+    <p><b>ที่อยู่:</b> ${user.address} จังหวัด${user.province} ${
+  user.postalCode
+}</p>
     <p><b>Email:</b> ${user.email}</p>
     <p><b>เบอร์ติดต่อ:</b> ${user.phone}</p>
-    <p><b>ผู้ติดต่อฉุกเฉิน:</b> ${user.emergencyName} (${user.emergencyPhoneRelated})</p>
+    <p><b>ผู้ติดต่อฉุกเฉิน:</b> ${user.emergencyName} (${
+  user.emergencyPhoneRelated
+})</p>
     <p><b>เบอร์ติดต่อฉุกเฉิน:</b> ${user.emergencyPhone}</p>
   </div>
-`;
+`
 
 const renderAcademicAndProfile = user => `
   <div class="row">
     ${renderAcademicProfile(user)}
     ${renderContact(user)}
   </div>
-`;
-
+`
 
 const renderMoreInfo = user => `
   <div>
@@ -72,7 +81,8 @@ const renderMoreInfo = user => `
         <p><b>กรุ๊ปเลือด:</b> ${user.blood}</p>
         <p><b>ศาสนา:</b> ${user.religion}</p>
         <p><b>ไซส์เสื้อ:</b> ${user.shirtSize}</p>
-        <p><b>รู้จักค่ายได้ผ่านช่องทางไหน:</b> ${user.knowCamp.join(', ') || '-'}</p>
+        <p><b>รู้จักค่ายได้ผ่านช่องทางไหน:</b> ${user.knowCamp.join(', ') ||
+          '-'}</p>
       </div>
       <div class="col col-3">
         <p><b>โรคประจำตัว:</b> ${user.disease || '-'}</p>
@@ -83,34 +93,48 @@ const renderMoreInfo = user => `
       </div>
     </div>
   </div>
-`;
+`
 
 const renderActivity = user => `
   <div>
     <h1>กิจกรรมและความสามารถพิเศษ</h1>
     <p class="answer">${user.activities}</p>
   </div>
-`;
+`
 
 const renderGeneralQuestion = answers => `
   <div>
     <h1>คำถามส่วนกลาง</h1>
-    ${answers.generalQuestions.map((answer, idx) => (`
-      <p class="question"><b>${(idx + 1)}.${question.generalQuestions[idx]}</b></p>
+    ${answers.generalQuestions
+      .map(
+        (answer, idx) => `
+      <p class="question"><b>${idx + 1}.${
+          question.generalQuestions[idx]
+        }</b></p>
       <p class="answer">${answer.answer}</p>
-    `)).join('<br>')}
+    `,
+      )
+      .join('<br>')}
   </div>
-`;
+`
 
 const renderMajorQuestion = (answers, major) => `
   <div>
     <h1>คำถามสาขา</h1>
-    ${answers.specialQuestions[major].map((answer, idx) => (`
-      <p class="question"><b>${(idx + 1)}.${question.specialQuestions[major][idx]}</b></p>
-      <p class="answer ${major === 'programming' && idx === 3 ? 'code' : ''}">${answer.answer}</p>
-    `)).join('<br>')}
+    ${answers.specialQuestions[major]
+      .map(
+        (answer, idx) => `
+      <p class="question"><b>${idx + 1}.${
+          question.specialQuestions[major][idx]
+        }</b></p>
+      <p class="answer ${major === 'programming' && idx === 3 ? 'code' : ''}">${
+          answer.answer
+        }</p>
+    `,
+      )
+      .join('<br>')}
   </div>
-`;
+`
 
 const generatePdf = user => `
 <html>
@@ -182,30 +206,36 @@ const generatePdf = user => `
   </style>
 </body>
 </html>
-`;
+`
 
-const createPDFPromise = user => new Promise((resolve, reject) => (
-  pdf.create(generatePdf(user), pdfOption).toFile(`interview/${user.major}/${user.interviewRef}.pdf`, (err, info) => {
-    if (err) return reject(err);
-    return resolve(info);
-  }
-)));
+const createPDFPromise = user =>
+  new Promise((resolve, reject) =>
+    pdf
+      .create(generatePdf(user), pdfOption)
+      .toFile(
+        `interview/${user.major}/${user.interviewRef}.pdf`,
+        (err, info) => {
+          if (err) return reject(err)
+          return resolve(info)
+        },
+      ),
+  )
 
-(async () => {
+;(async () => {
   const users = await User.find({
     status: 'completed',
     isPassStageOne: true,
     isPassStageTwo: true,
     isPassStageThree: true,
-    interviewRef: { $in: ['CT56'] }
+    interviewRef: { $in: ['CT56'] },
   })
-  .populate('questions')
-  .sort('interviewRef');
-  console.log(users.length);
+    .populate('questions')
+    .sort('interviewRef')
+  console.log(users.length)
   // await createPDFPromise(users);
   for (const user of users) {
-    await createPDFPromise(user);
-    console.log(`Done for ${user.interviewRef}`);
+    await createPDFPromise(user)
+    console.log(`Done for ${user.interviewRef}`)
   }
-  console.log('DONE');
-})();
+  console.log('DONE')
+})()

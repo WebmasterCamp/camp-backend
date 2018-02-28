@@ -1,1 +1,1 @@
-export { getUserInfoFromToken } from './facebook-token';
+export { getUserInfoFromToken } from './facebook-token'

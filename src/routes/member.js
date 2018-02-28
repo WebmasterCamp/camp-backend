@@ -1,18 +1,19 @@
-import { Router } from 'express';
-import { result,
+import { Router } from 'express'
+import {
+  result,
   getVote,
   postVoteBoy,
   postVoteGirl,
-  postVoteSpecial
-} from '../controllers/member';
+  postVoteSpecial,
+} from '../controllers/member'
 
-const router = Router();
+const router = Router()
 
-router.get('/result', result);
-router.get('/:type', getVote);
+router.get('/result', result)
+router.get('/:type', getVote)
 
-router.post('/vote/boy', postVoteBoy);
-router.post('/vote/girl', postVoteGirl);
-router.post('/vote/special', postVoteSpecial);
+router.post('/vote/boy', postVoteBoy)
+router.post('/vote/girl', postVoteGirl)
+router.post('/vote/special', postVoteSpecial)
 
-export default router;
+export default router

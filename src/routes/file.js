@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import pdf from 'html-pdf';
-import moment from 'moment';
-import 'moment/locale/th';
+import { Router } from 'express'
+import pdf from 'html-pdf'
+import moment from 'moment'
+import 'moment/locale/th'
 
-import { User } from '../models';
-import { adminAuthen } from '../middlewares/authenticator';
-import { majorAsText } from '../utilities/helpers';
-import question from './static-question';
+import { User } from '../models'
+import { adminAuthen } from '../middlewares/authenticator'
+import { majorAsText } from '../utilities/helpers'
+import question from './static-question'
 
-const router = Router();
+const router = Router()
 
 const pdfOption = {
   format: 'A4',
@@ -16,22 +16,26 @@ const pdfOption = {
     top: '0.8in',
     right: '0.6in',
     bottom: '0.8in',
-    left: '0.6in'
-  }
-};
+    left: '0.6in',
+  },
+}
 
 const renderName = user => `
   <div class="row">
     <div>
-      <img class="user-img" style="background-image: url('https://api.ywc15.ywc.in.th/${user.picture}');" />
+      <img class="user-img" style="background-image: url('https://api.ywc15.ywc.in.th/${
+        user.picture
+      }');" />
     </div>
     <div class="col" style="padding-left: 10px;">
-      <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${user.nickname})</h1>
+      <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${
+  user.nickname
+})</h1>
       <h1><b>สาขา:</b> ${majorAsText(user.major)}</h1>
       <h1>Ref: M01</h1>
     </div>
   </div>
-`;
+`
 
 const renderAcademicProfile = user => `
   <div class="col">
@@ -41,26 +45,29 @@ const renderAcademicProfile = user => `
     <p><b>สาขาวิชา:</b> ${user.department}</p>
     <p><b>สถาบัน:</b> ${user.university}</p>
   </div>
-`;
+`
 
 const renderContact = user => `
   <div class="col">
     <h1>ข้อมูลติดต่อ</h1>
-    <p><b>ที่อยู่:</b> ${user.address} จังหวัด${user.province} ${user.postalCode}</p>
+    <p><b>ที่อยู่:</b> ${user.address} จังหวัด${user.province} ${
+  user.postalCode
+}</p>
     <p><b>Email:</b> ${user.email}</p>
     <p><b>เบอร์ติดต่อ:</b> ${user.phone}</p>
-    <p><b>ผู้ติดต่อฉุกเฉิน:</b> ${user.emergencyName} (${user.emergencyPhoneRelated})</p>
+    <p><b>ผู้ติดต่อฉุกเฉิน:</b> ${user.emergencyName} (${
+  user.emergencyPhoneRelated
+})</p>
     <p><b>เบอร์ติดต่อฉุกเฉิน:</b> ${user.emergencyPhone}</p>
   </div>
-`;
+`
 
 const renderAcademicAndProfile = user => `
   <div class="row">
     ${renderAcademicProfile(user)}
     ${renderContact(user)}
   </div>
-`;
-
+`
 
 const renderMoreInfo = user => `
   <div>
@@ -71,7 +78,8 @@ const renderMoreInfo = user => `
         <p><b>กรุ๊ปเลือด:</b> ${user.blood}</p>
         <p><b>ศาสนา:</b> ${user.religion}</p>
         <p><b>ไซส์เสื้อ:</b> ${user.shirtSize}</p>
-        <p><b>รู้จักค่ายได้ผ่านช่องทางไหน:</b> ${user.knowCamp.join(', ') || '-'}</p>
+        <p><b>รู้จักค่ายได้ผ่านช่องทางไหน:</b> ${user.knowCamp.join(', ') ||
+          '-'}</p>
       </div>
       <div class="col col-3">
         <p><b>โรคประจำตัว:</b> ${user.disease || '-'}</p>
@@ -82,34 +90,44 @@ const renderMoreInfo = user => `
       </div>
     </div>
   </div>
-`;
+`
 
 const renderActivity = user => `
   <div>
     <h1>กิจกรรมและความสามารถพืเศษ</h1>
     <p class="answer">${user.activities}</p>
   </div>
-`;
+`
 
 const renderGeneralQuestion = answers => `
   <div>
     <h1>คำถามส่วนกลาง</h1>
-    ${answers.generalQuestions.map((answer, idx) => (`
-      <p><b>${(idx + 1)}.${question.generalQuestions[idx]}</b></p>
+    ${answers.generalQuestions
+      .map(
+        (answer, idx) => `
+      <p><b>${idx + 1}.${question.generalQuestions[idx]}</b></p>
       <p class="answer">${answer.answer}</p>
-    `)).join('<br>')}
+    `,
+      )
+      .join('<br>')}
   </div>
-`;
+`
 
 const renderMajorQuestion = (answers, major) => `
   <div>
     <h1>คำถามสาขา</h1>
-    ${answers.specialQuestions[major].map((answer, idx) => (`
-      <p><b>${(idx + 1)}.${question.specialQuestions[major][idx]}</b></p>
-      <p class="answer ${major === 'programming' && idx === 3 ? 'code' : ''}">${answer.answer}</p>
-    `)).join('<br>')}
+    ${answers.specialQuestions[major]
+      .map(
+        (answer, idx) => `
+      <p><b>${idx + 1}.${question.specialQuestions[major][idx]}</b></p>
+      <p class="answer ${major === 'programming' && idx === 3 ? 'code' : ''}">${
+          answer.answer
+        }</p>
+    `,
+      )
+      .join('<br>')}
   </div>
-`;
+`
 
 const generatePdf = user => `
 <html>
@@ -181,7 +199,7 @@ const generatePdf = user => `
   </style>
 </body>
 </html>
-`;
+`
 
 router.get('/interview/:id', async (req, res) => {
   try {
@@ -190,19 +208,18 @@ router.get('/interview/:id', async (req, res) => {
       status: 'completed',
       isPassStageOne: true,
       isPassStageTwo: true,
-      isPassStageThree: true
-    })
-    .populate('questions');
-    if (!user) return res.error('Not an interview member or User not found');
+      isPassStageThree: true,
+    }).populate('questions')
+    if (!user) return res.error('Not an interview member or User not found')
     pdf.create(generatePdf(user), pdfOption).toStream((err, stream) => {
-      if (err) return res.error(err);
-      res.attachment(`${user.major}-${user._id}.pdf`);
-      return stream.pipe(res);
+      if (err) return res.error(err)
+      res.attachment(`${user.major}-${user._id}.pdf`)
+      return stream.pipe(res)
       // return res.download(buffer);
-    });
+    })
   } catch (e) {
-    return res.error(e);
+    return res.error(e)
   }
-});
+})
 
-export default router;
+export default router

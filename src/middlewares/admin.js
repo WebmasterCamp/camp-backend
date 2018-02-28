@@ -1,19 +1,19 @@
-import { respondErrors } from '../utilities';
-import _ from 'lodash';
+import { respondErrors } from '../utilities'
+import _ from 'lodash'
 
 export const requireRoles = (...roles) => (req, res, next) => {
-  const role = req.get('role');
-  const username = req.get('username');
+  const role = req.get('role')
+  const username = req.get('username')
   if (_.includes(roles, role)) {
     req.admin = {
       username: username,
-      role: role
-    };
-    next();
+      role: role,
+    }
+    next()
   } else {
-    respondErrors(res)({ code: 403, message: 'Forbidden' });
+    respondErrors(res)({ code: 403, message: 'Forbidden' })
   }
-};
+}
 
 export const permissions = {
   SuperAdmin: ['programming', 'marketing', 'content', 'design', 'all'],
@@ -21,23 +21,23 @@ export const permissions = {
   JudgeDev: 'programming',
   JudgeMarketing: 'marketing',
   JudgeContent: 'content',
-  JudgeDesign: 'design'
-};
+  JudgeDesign: 'design',
+}
 export const requireMatchedMajor = (req, res, next) => {
-  const role = req.get('role');
+  const role = req.get('role')
   if (_.includes(_.castArray(permissions[role]), req.query.major)) {
-    next();
+    next()
   } else {
-    respondErrors(res)({ code: 403, message: 'Forbidden' });
+    respondErrors(res)({ code: 403, message: 'Forbidden' })
   }
-};
+}
 
 export const adminAuthorize = (req, res, next) => {
-  const role = req.get('role');
-  const username = req.get('username');
+  const role = req.get('role')
+  const username = req.get('username')
   req.admin = {
     username: username,
-    role: role
-  };
-  next();
-};
+    role: role,
+  }
+  next()
+}
