@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-const { Schema } = mongoose;
-const { ObjectId } = Schema.Types;
+import mongoose from 'mongoose'
+const { Schema } = mongoose
+const { ObjectId } = Schema.Types
 
 const schema = new Schema({
   __v: { type: Number, select: false },
@@ -12,7 +12,7 @@ const schema = new Schema({
   // Step 1 Form field
   title: {
     type: String,
-    enum: ['นาย', 'นางสาว']
+    enum: ['นาย', 'นางสาว'],
   },
   firstName: String,
   lastName: String,
@@ -23,21 +23,30 @@ const schema = new Schema({
   department: String,
   academicYear: {
     type: String,
-    enum: ['ปี 1', 'ปี 2', 'ปี 3', 'ปี 4', 'ปี 5', 'ปี 6', 'ปวส. ปี 1', 'ปวส. ปี 2']
+    enum: [
+      'ปี 1',
+      'ปี 2',
+      'ปี 3',
+      'ปี 4',
+      'ปี 5',
+      'ปี 6',
+      'ปวส. ปี 1',
+      'ปวส. ปี 2',
+    ],
   },
   university: String,
   sex: {
     type: String,
-    enum: ['ชาย', 'หญิง']
+    enum: ['ชาย', 'หญิง'],
   },
   birthdate: Date,
   religion: {
     type: String,
-    enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'สิกข์', 'ไม่ระบุ']
+    enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'สิกข์', 'ไม่ระบุ'],
   },
   blood: {
     type: String,
-    enum: ['A', 'B', 'O', 'AB']
+    enum: ['A', 'B', 'O', 'AB'],
   },
   age: Number, // Aim to deprecated
   // Step 2 Form field
@@ -66,7 +75,7 @@ const schema = new Schema({
   designPortfolio: String,
   major: {
     type: String,
-    enum: ['content', 'programming', 'design', 'marketing']
+    enum: ['content', 'programming', 'design', 'marketing'],
   },
 
   line: String,
@@ -89,29 +98,29 @@ const schema = new Schema({
   // Grading stage
   isPassStageOne: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isJudgeStageTwo: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isPassStageTwo: {
     type: Boolean,
-    default: false
+    default: false,
   },
   noteStageTwo: String,
   isJudgeMajorQuestion: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isPassStageThree: {
     type: Boolean,
-    default: false
+    default: false,
   },
   grader_id: { type: ObjectId, ref: 'Admin' },
   interviewRef: String,
   isFinalist: Boolean,
-  isFinalistBackup: Boolean
-});
+  isFinalistBackup: Boolean,
+})
 
-export default mongoose.model('User', schema);
+export default mongoose.model('User', schema)

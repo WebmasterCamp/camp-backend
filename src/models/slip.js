@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const { Schema } = mongoose
 
 const schema = new Schema({
   __v: { type: Number, select: false },
@@ -8,7 +8,7 @@ const schema = new Schema({
   status: { type: String, default: 'pending' },
   file_path: { type: String },
   no: String,
-  transfer_at: String
-});
+  transfer_at: String,
+})
 
-export default mongoose.model('Slip', schema);
+export default mongoose.model('Slip', schema)

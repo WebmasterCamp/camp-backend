@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const { Schema } = mongoose
 
 const schema = new Schema({
   __v: { type: Number, select: false },
@@ -18,9 +18,9 @@ const schema = new Schema({
       'stage-2',
       'queue',
       'slips',
-      'score'
-    ]
-  }
-});
+      'score',
+    ],
+  },
+})
 
-export default mongoose.model('Admin', schema);
+export default mongoose.model('Admin', schema)

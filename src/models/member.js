@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const { Schema } = mongoose
 
 const schema = new Schema({
   __v: { type: Number, select: false },
@@ -11,7 +11,7 @@ const schema = new Schema({
   vote_special: { type: Number, default: 0 },
   voted_boy: { type: Boolean, default: false },
   voted_girl: { type: Boolean, default: false },
-  voted_special: { type: Boolean, default: false }
-});
+  voted_special: { type: Boolean, default: false },
+})
 
-export default mongoose.model('Member', schema);
+export default mongoose.model('Member', schema)

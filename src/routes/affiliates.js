@@ -1,60 +1,63 @@
-import { Router } from 'express';
-import { requireRoles } from '../middlewares';
-import { adminAuthen } from '../middlewares/authenticator';
-import { Affiliate } from '../models';
-import { respondResult, respondSuccess, respondErrors } from '../utilities';
+import { Router } from 'express'
+import { requireRoles } from '../middlewares'
+import { adminAuthen } from '../middlewares/authenticator'
+import { Affiliate } from '../models'
+import { respondResult, respondSuccess, respondErrors } from '../utilities'
 
-const router = Router();
+const router = Router()
 router.get('/', adminAuthen('admin'), async (req, res) => {
   try {
-    const affiliates = await Affiliate.find();
-    respondResult(res)(affiliates);
+    const affiliates = await Affiliate.find()
+    respondResult(res)(affiliates)
   } catch (err) {
-    respondErrors(res)(err);
+    respondErrors(res)(err)
   }
-});
+})
 
 router.post('/', async (req, res) => {
   try {
-    const { name, url } = req.body;
+    const { name, url } = req.body
     const newAffiliate = new Affiliate({
       name,
       url,
-      approved: false
-    });
-    await newAffiliate.save();
-    return res.send({ success: true });
+      approved: false,
+    })
+    await newAffiliate.save()
+    return res.send({ success: true })
   } catch (err) {
-    respondErrors(res)(err);
+    respondErrors(res)(err)
   }
-});
+})
 
 router.get('/approved', async (req, res) => {
   try {
-    const affiliates = await Affiliate.find({ approved: true });
-    respondResult(res)(affiliates);
+    const affiliates = await Affiliate.find({ approved: true })
+    respondResult(res)(affiliates)
   } catch (err) {
-    respondErrors(res)(err);
+    respondErrors(res)(err)
   }
-});
+})
 
 router.delete('/:id', adminAuthen('admin'), async (req, res) => {
   try {
-    await Affiliate.remove({ _id: req.params.id });
-    return res.send({ success: true });
+    await Affiliate.remove({ _id: req.params.id })
+    return res.send({ success: true })
   } catch (e) {
-    return res.error(e);
+    return res.error(e)
   }
-});
+})
 
 router.put('/:id/approved', adminAuthen('admin'), async (req, res) => {
   try {
-    await Affiliate.findOneAndUpdate({ _id: req.params.id }, { approved: req.body.approved });
-    return res.send({ success: true });
+    await Affiliate.findOneAndUpdate(
+      { _id: req.params.id },
+      { approved: req.body.approved },
+    )
+    return res.send({ success: true })
   } catch (e) {
-    return res.error(e);
+    return res.error(e)
   }
-});
+})
 
 // router.post('/update', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
 //   try {
@@ -70,4 +73,4 @@ router.put('/:id/approved', adminAuthen('admin'), async (req, res) => {
 //   }
 // });
 
-export default router;
+export default router

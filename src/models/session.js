@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
-const { ObjectId } = Schema.Types;
+const mongoose = require('mongoose')
+const { Schema } = mongoose
+const { ObjectId } = Schema.Types
 
 const schema = new Schema({
   __v: { type: Number, select: false },
@@ -10,7 +10,7 @@ const schema = new Schema({
   facebook: String,
   token: String,
   mail: String,
-  name: String
-});
+  name: String,
+})
 
-export default mongoose.model('Session', schema);
+export default mongoose.model('Session', schema)

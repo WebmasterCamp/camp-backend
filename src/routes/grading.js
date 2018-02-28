@@ -1,23 +1,23 @@
-import { Router } from 'express';
-import _ from 'lodash';
-import { Admin, User, Question } from '../models';
-import { adminAuthen } from '../middlewares/authenticator';
+import { Router } from 'express'
+import _ from 'lodash'
+import { Admin, User, Question } from '../models'
+import { adminAuthen } from '../middlewares/authenticator'
 
-const router = Router();
+const router = Router()
 
 const majorToPass = {
   programming: 3,
   marketing: 1,
   content: 2,
-  design: 1
-};
+  design: 1,
+}
 
 const maximumMajor = {
   programming: 4,
   marketing: 2,
   content: 3,
-  design: 2
-};
+  design: 2,
+}
 
 // router.get('/stage-one', adminAuthen(['admin', 'stage-1']), async (req, res) => {
 //   const { _id: graderId } = req.admin;
@@ -39,31 +39,40 @@ router.get('/stage-one/stat', adminAuthen(['admin']), async (req, res) => {
   const completedUsersPromise = User.find({ status: 'completed' })
     .populate('questions')
     .select('_id questions')
-    .lean();
-  const gradersPromise = Admin.find({ role: 'stage-1' });
-  const [completedUsers, graders] = await Promise.all([completedUsersPromise, gradersPromise]);
+    .lean()
+  const gradersPromise = Admin.find({ role: 'stage-1' })
+  const [completedUsers, graders] = await Promise.all([
+    completedUsersPromise,
+    gradersPromise,
+  ])
   const graderIdMapping = graders.reduce((prev, curr) => {
-    prev[curr._id] = curr.username;
-    return prev;
-  }, {});
+    prev[curr._id] = curr.username
+    return prev
+  }, {})
   const groupedByGraderId = graders.reduce((prev, curr) => {
-    prev[curr._id] = [];
-    return prev;
-  }, {});
+    prev[curr._id] = []
+    return prev
+  }, {})
   completedUsers.forEach(user => {
     user.questions.stageOne.forEach(gradedItem => {
-      groupedByGraderId[gradedItem.grader_id] = [...groupedByGraderId[gradedItem.grader_id], gradedItem];
-    });
-  });
-  const gradersStat = Object.keys(groupedByGraderId).reduce((prev, graderId) => {
-    prev[graderIdMapping[graderId]] = groupedByGraderId[graderId].length;
-    return prev;
-  }, {});
+      groupedByGraderId[gradedItem.grader_id] = [
+        ...groupedByGraderId[gradedItem.grader_id],
+        gradedItem,
+      ]
+    })
+  })
+  const gradersStat = Object.keys(groupedByGraderId).reduce(
+    (prev, graderId) => {
+      prev[graderIdMapping[graderId]] = groupedByGraderId[graderId].length
+      return prev
+    },
+    {},
+  )
   return res.send({
     all: completedUsers.length,
-    graded: gradersStat
-  });
-});
+    graded: gradersStat,
+  })
+})
 
 // router.get('/stage-one/:id', adminAuthen(['admin', 'stage-1']), async (req, res) => {
 //   try {
@@ -180,13 +189,15 @@ router.get('/stage-one/stat', adminAuthen(['admin']), async (req, res) => {
 // });
 
 router.get('/stage-two/stat', adminAuthen(['admin']), async (req, res) => {
-  const stageOnePassedUsers = await User.find({ status: 'completed', isPassStageOne: true })
-    .lean();
+  const stageOnePassedUsers = await User.find({
+    status: 'completed',
+    isPassStageOne: true,
+  }).lean()
   return res.send({
     all: stageOnePassedUsers.length,
-    graded: stageOnePassedUsers.filter(user => user.isJudgeStageTwo).length
-  });
-});
+    graded: stageOnePassedUsers.filter(user => user.isJudgeStageTwo).length,
+  })
+})
 
 // router.get('/major/:major', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
 //   const { _id: graderId } = req.admin;
@@ -215,54 +226,67 @@ router.get('/major/:major/stat', adminAuthen(['admin']), async (req, res) => {
     status: 'completed',
     isPassStageOne: true,
     isPassStageTwo: true,
-    major: req.params.major
+    major: req.params.major,
   })
-  .populate('questions')
-  .select('_id questions')
-  .lean();
-  const gradersPromise = Admin.find({ role: req.params.major });
-  const [completedUsers, graders] = await Promise.all([completedUsersPromise, gradersPromise]);
+    .populate('questions')
+    .select('_id questions')
+    .lean()
+  const gradersPromise = Admin.find({ role: req.params.major })
+  const [completedUsers, graders] = await Promise.all([
+    completedUsersPromise,
+    gradersPromise,
+  ])
   const graderIdMapping = graders.reduce((prev, curr) => {
-    prev[curr._id] = curr.username;
-    return prev;
-  }, {});
+    prev[curr._id] = curr.username
+    return prev
+  }, {})
   const groupedByGraderId = graders.reduce((prev, curr) => {
-    prev[curr._id] = [];
-    return prev;
-  }, {});
+    prev[curr._id] = []
+    return prev
+  }, {})
   completedUsers.forEach(user => {
     user.questions.stageThree.forEach(gradedItem => {
-      groupedByGraderId[gradedItem.grader_id] = [...groupedByGraderId[gradedItem.grader_id], gradedItem];
-    });
-  });
-  const gradersStat = Object.keys(groupedByGraderId).reduce((prev, graderId) => {
-    prev[graderIdMapping[graderId]] = groupedByGraderId[graderId].length;
-    return prev;
-  }, {});
+      groupedByGraderId[gradedItem.grader_id] = [
+        ...groupedByGraderId[gradedItem.grader_id],
+        gradedItem,
+      ]
+    })
+  })
+  const gradersStat = Object.keys(groupedByGraderId).reduce(
+    (prev, graderId) => {
+      prev[graderIdMapping[graderId]] = groupedByGraderId[graderId].length
+      return prev
+    },
+    {},
+  )
   return res.send({
     all: completedUsers.length,
-    graded: gradersStat
-  });
-});
+    graded: gradersStat,
+  })
+})
 
-router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']), async (req, res) => {
-  try {
-    const { major } = req.params;
-    if (major !== req.admin.role) {
-      return res.error({ message: 'Role Mismatch' });
+router.get(
+  '/major/:major/pass-stat',
+  adminAuthen(['admin', 'programming', 'design', 'content', 'marketing']),
+  async (req, res) => {
+    try {
+      const { major } = req.params
+      if (major !== req.admin.role) {
+        return res.error({ message: 'Role Mismatch' })
+      }
+      const interviewCandidateCount = await User.count({
+        status: 'completed',
+        isPassStageOne: true,
+        isPassStageTwo: true,
+        isPassStageThree: true,
+        major: req.params.major,
+      })
+      return res.send({ count: interviewCandidateCount })
+    } catch (e) {
+      return res.error(e)
     }
-    const interviewCandidateCount = await User.count({
-      status: 'completed',
-      isPassStageOne: true,
-      isPassStageTwo: true,
-      isPassStageThree: true,
-      major: req.params.major
-    });
-    return res.send({ count: interviewCandidateCount });
-  } catch (e) {
-    return res.error(e);
-  }
-});
+  },
+)
 
 // router.get('/major/:major/:id', adminAuthen(['programming', 'design', 'content', 'marketing']), async (req, res) => {
 //   try {
@@ -339,33 +363,41 @@ router.get('/major/:major/pass-stat', adminAuthen(['admin', 'programming', 'desi
 
 router.get('/criteria-analyze', adminAuthen('admin'), async (req, res) => {
   try {
-    const queryCreator = major => User.find({
-      status: 'completed',
-      isPassStageOne: true,
-      isPassStageTwo: true,
-      major
-    })
-      .populate('questions', 'stageThree')
-      .select('questions')
-      .then(users => users.map(user => user.questions.stageThree.filter(graded => graded.isPass).length))
-      .then(stats => _.range(0, maximumMajor[major] + 1)
-        .map(passCount => stats.filter(stat => stat === passCount).length)
-      );
+    const queryCreator = major =>
+      User.find({
+        status: 'completed',
+        isPassStageOne: true,
+        isPassStageTwo: true,
+        major,
+      })
+        .populate('questions', 'stageThree')
+        .select('questions')
+        .then(users =>
+          users.map(
+            user =>
+              user.questions.stageThree.filter(graded => graded.isPass).length,
+          ),
+        )
+        .then(stats =>
+          _.range(0, maximumMajor[major] + 1).map(
+            passCount => stats.filter(stat => stat === passCount).length,
+          ),
+        )
     const [programming, marketing, design, content] = await Promise.all([
       queryCreator('programming'),
       queryCreator('marketing'),
       queryCreator('design'),
-      queryCreator('content')
-    ]);
+      queryCreator('content'),
+    ])
     return res.send({
       programming,
       marketing,
       design,
-      content
-    });
+      content,
+    })
   } catch (e) {
-    return res.error(e);
+    return res.error(e)
   }
-});
+})
 
-export default router;
+export default router

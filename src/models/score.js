@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
-const { Schema } = mongoose;
+import mongoose from 'mongoose'
+const { Schema } = mongoose
 
 const schema = new Schema({
   group: {
     type: String,
-    unique: true
+    unique: true,
   },
-  score: { type: Number, default: 0 }
-});
+  score: { type: Number, default: 0 },
+})
 
-export default mongoose.model('Score', schema);
+export default mongoose.model('Score', schema)
