@@ -39,15 +39,19 @@ jspm_packages
 # Sensitive files
 config
 
-# build files
+# Bundles
 build
+dist
 
-#upload files
+# Uploaded Files
 uploads
 
-#csv and txt
+# CSV and TXT
 *.csv
 *.txt
 
-#interview generated pdf
+# Interview generated pdf
 interview/
+
+# Environment Files
+.env
