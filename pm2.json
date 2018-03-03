@@ -1,0 +1,23 @@
+{
+  "apps": [
+    {
+      "exec_mode": "fork_mode",
+      "name": "camp-backend",
+      "script": "./dist/index.js",
+      "env": {
+        "PORT": 3001,
+        "IO_PORT": 3002,
+        "NODE_ENV": "development"
+      },
+      "error_file": "./pm2/logs/ywc-register-backend-api.err.log",
+      "out_file": "./pm2/logs/ywc-register-backend-api.out.log",
+      "watch": "src",
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
+    },
+    {
+      "name": "ywc-cron",
+      "script": "./src/cron.js",
+      "interpreter": "./node_modules/.bin/babel-node"
+    }
+  ]
+}

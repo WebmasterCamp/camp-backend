@@ -36,10 +36,10 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# Sensitive files
+# Per-Environment Configuration
 config
 
-# Bundles
+# Server Bundles
 build
 dist
 
@@ -53,5 +53,3 @@ uploads
 # Interview generated pdf
 interview/
 
-# Environment Files
-.env

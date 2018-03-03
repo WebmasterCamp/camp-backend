@@ -9,7 +9,8 @@
   "scripts": {
     "start": "npm run dev:watch | npm run dev:run",
     "dev:watch": "webpack --watch",
-    "dev:run": "nodemon './dist/index.js' --watch './dist'"
+    "dev:run": "nodemon './dist/index.js' --watch './dist'",
+    "build": "NODE_ENV=PRODUCTION webpack"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",
@@ -34,7 +35,9 @@
   },
   "dependencies": {
     "babel-register": "^6.26.0",
+    "config": "^1.30.0",
     "express": "^4.16.2",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "winston": "^3.0.0-rc1"
   }
 }
