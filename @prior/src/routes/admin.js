@@ -1,10 +1,10 @@
-import { Router } from 'express'
+import {Router} from 'express'
 import bcrypt from 'bcrypt'
 
-import { adminAuthen } from '../middlewares/authenticator'
-import { requireRoles, adminAuthorize } from '../middlewares'
-import { respondResult, respondSuccess, respondErrors } from '../utilities'
-import { Admin } from '../models'
+import {adminAuthen} from '../middlewares/authenticator'
+import {requireRoles, adminAuthorize} from '../middlewares'
+import {respondResult, respondSuccess, respondErrors} from '../utilities'
+import {Admin} from '../models'
 
 const router = Router()
 
@@ -99,14 +99,15 @@ router.get('/', adminAuthen('admin'), async (req, res) => {
   }
 })
 
-router.post('/', adminAuthen('admin'), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     await Admin.create({
       username: req.body.username,
       password: bcrypt.hashSync(req.body.password, 10),
       role: req.body.role,
     })
-    return res.send({ success: true })
+
+    return res.send({success: true})
   } catch (err) {
     return res.error(err)
   }
@@ -118,8 +119,8 @@ router.get('/me', adminAuthen('any'), (req, res) => {
 
 router.delete('/:id', adminAuthen('admin'), async (req, res) => {
   try {
-    await Admin.remove({ _id: req.params.id })
-    return res.send({ success: true })
+    await Admin.remove({_id: req.params.id})
+    return res.send({success: true})
   } catch (e) {
     return res.error(e)
   }

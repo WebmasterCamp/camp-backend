@@ -4,8 +4,8 @@ import _ from 'lodash'
 import config from 'config'
 import bcrypt from 'bcrypt'
 
-import { respondResult, respondErrors } from '../utilities'
-import { User, Question, Slip, Admin } from '../models'
+import {respondResult, respondErrors} from '../utilities'
+import {User, Question, Slip, Admin} from '../models'
 // export const login = async (req, res) => {
 //   try {
 //     const { facebook } = req.body;
@@ -22,7 +22,7 @@ import { User, Question, Slip, Admin } from '../models'
 // };
 
 export const login = async (req, res) => {
-  const { accessToken } = req.body
+  const {accessToken} = req.body
   if (!accessToken) return respondErrors(res)('Not Token Provide')
   try {
     // fb.setAccessToken(accessToken);
@@ -48,7 +48,7 @@ export const login = async (req, res) => {
         (err, data) => (err ? reject(err) : resolve(data)),
       )
     })
-    let user = await User.findOne({ facebook: fbUser.id })
+    let user = await User.findOne({facebook: fbUser.id})
     if (!user) {
       const questions = new Question()
       const q = await questions.save()
@@ -67,7 +67,7 @@ export const login = async (req, res) => {
       _.pick(user.toObject(), ['_id', 'facebook', 'status']),
       config.JWT_SECRET,
     )
-    return res.send({ token })
+    return res.send({token})
   } catch (e) {
     return respondErrors(res)(e)
   }
@@ -87,8 +87,8 @@ export const adminLogin = async (req, res) => {
     req.sanitizeBody('password').toString()
     const errors = req.validationErrors()
     if (errors) return res.error(errors)
-    const { username, password } = req.body
-    const admin = await Admin.findOne({ username }).select('password')
+    const {username, password} = req.body
+    const admin = await Admin.findOne({username}).select('password')
     if (admin) {
       const isMatch = await bcrypt.compare(password, admin.password)
       if (isMatch) {
@@ -96,7 +96,7 @@ export const adminLogin = async (req, res) => {
           _.pick(admin.toObject(), ['username', '_id']),
           config.JWT_SECRET,
         )
-        return res.send({ token })
+        return res.send({token})
       }
     }
     return res.error('Fail to Login')

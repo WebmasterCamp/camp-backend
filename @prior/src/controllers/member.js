@@ -1,13 +1,13 @@
-import { respondResult, respondErrors } from '../utilities'
+import {respondResult, respondErrors} from '../utilities'
 import Member from '../models/member'
 
 export const result = async (req, res) => {
   try {
-    const boys = await Member.find({ sex: 'ชาย' }).sort('-vote_count')
-    const girls = await Member.find({ sex: 'หญิง' }).sort('-vote_count')
+    const boys = await Member.find({sex: 'ชาย'}).sort('-vote_count')
+    const girls = await Member.find({sex: 'หญิง'}).sort('-vote_count')
     const specials = await Member.find({}).sort('-vote_special')
 
-    respondResult(res)({ boys, girls, specials })
+    respondResult(res)({boys, girls, specials})
   } catch (err) {
     respondErrors(res)(err)
   }
@@ -15,11 +15,11 @@ export const result = async (req, res) => {
 
 export const getVote = async (req, res) => {
   try {
-    const { id } = req.query
+    const {id} = req.query
     if (!id) throw new Error('id not found.')
 
-    const member = await Member.findOne({ facebook: id })
-    const { type } = req.params
+    const member = await Member.findOne({facebook: id})
+    const {type} = req.params
 
     if (type === 'boy' && member.voted_boy) throw new Error('already vote boy')
     if (type === 'girl' && member.voted_girl)
@@ -43,9 +43,9 @@ export const getVote = async (req, res) => {
 
 export const postVoteBoy = async (req, res) => {
   try {
-    const { voter_fb } = req.body
-    const voter = await Member.findOne({ facebook: voter_fb })
-    const member = await Member.findOne({ facebook: req.body.facebook })
+    const {voter_fb} = req.body
+    const voter = await Member.findOne({facebook: voter_fb})
+    const member = await Member.findOne({facebook: req.body.facebook})
 
     if (!voter || !member) throw new Error('member not found')
     if (member.sex !== 'ชาย') throw new Error('this member is not a boy.')
@@ -53,7 +53,7 @@ export const postVoteBoy = async (req, res) => {
 
     await voteMemberBoy(voter, member)
 
-    respondResult(res)({ message: 'voted.' })
+    respondResult(res)({message: 'voted.'})
   } catch (err) {
     respondErrors(res)(err)
   }
@@ -61,9 +61,9 @@ export const postVoteBoy = async (req, res) => {
 
 export const postVoteGirl = async (req, res) => {
   try {
-    const { voter_fb } = req.body
-    const voter = await Member.findOne({ facebook: voter_fb })
-    const member = await Member.findOne({ facebook: req.body.facebook })
+    const {voter_fb} = req.body
+    const voter = await Member.findOne({facebook: voter_fb})
+    const member = await Member.findOne({facebook: req.body.facebook})
 
     if (!voter || !member) throw new Error('member not found')
     if (member.sex !== 'หญิง') throw new Error('this member is not a girl.')
@@ -71,7 +71,7 @@ export const postVoteGirl = async (req, res) => {
 
     await voteMemberGirl(voter, member)
 
-    respondResult(res)({ message: 'voted.' })
+    respondResult(res)({message: 'voted.'})
   } catch (err) {
     respondErrors(res)(err)
   }
@@ -79,15 +79,15 @@ export const postVoteGirl = async (req, res) => {
 
 export const postVoteSpecial = async (req, res) => {
   try {
-    const { voter_fb } = req.body
-    const voter = await Member.findOne({ facebook: voter_fb })
-    const member = await Member.findOne({ facebook: req.body.facebook })
+    const {voter_fb} = req.body
+    const voter = await Member.findOne({facebook: voter_fb})
+    const member = await Member.findOne({facebook: req.body.facebook})
 
     if (!voter || !member) throw new Error('member not found')
     if (voter.voted_special) throw new Error('already voted special.')
     await voteMemberSpecial(voter, member)
 
-    respondResult(res)({ message: 'voted' })
+    respondResult(res)({message: 'voted'})
   } catch (err) {
     respondErrors(res)(err)
   }
@@ -118,8 +118,8 @@ async function voteMemberSpecial(voter, member) {
 }
 
 function queryFromType(type) {
-  if (type === 'boy') return { sex: 'ชาย' }
-  if (type === 'girl') return { sex: 'หญิง' }
+  if (type === 'boy') return {sex: 'ชาย'}
+  if (type === 'girl') return {sex: 'หญิง'}
 
   return {}
 }

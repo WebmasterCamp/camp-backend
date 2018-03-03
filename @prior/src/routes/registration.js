@@ -1,21 +1,24 @@
-import { Router } from 'express'
-import { authen } from '../middlewares/authenticator'
+import {Router} from 'express'
+import {authen} from '../middlewares/authenticator'
 import {
   validateRegistrationStep,
   majorQuestionValidator,
 } from '../middlewares/validator'
-import { User, Question } from '../models'
-import { singleUpload } from '../middlewares'
-import { closeAfterDeadline } from '../middlewares/deadline'
+import {User, Question} from '../models'
+import {singleUpload} from '../middlewares'
+import {closeAfterDeadline} from '../middlewares/deadline'
 
 const updateRegisterStep = async (id, step) => {
-  const user = await User.findOne({ _id: id })
+  const user = await User.findOne({_id: id})
   user.completed[step - 1] = true
   user.markModified('completed')
-  return await user.save()
+  return user.save()
 }
 
 const router = Router()
+
+// HACK: Forgive me for my sins
+const _id = '5a9a35bd6f40105594487d1b'
 
 // STEP 1: Personal Info
 router.put(
@@ -26,8 +29,9 @@ router.put(
   validateRegistrationStep[0],
   async (req, res) => {
     try {
-      const { _id } = req.user
-      const user = await User.findOne({ _id })
+      // const _id = '5a9a35bd6f40105594487d1b'
+      // const {_id} = req.user
+      const user = await User.findOne({_id})
       const fields = [
         'title',
         'firstName',
@@ -50,18 +54,18 @@ router.put(
       if (req.file) {
         user.picture = req.file.path
       } else if (!req.file && !user.picture) {
-        return res.status(400).send({ code: 400, message: 'require file' })
+        return res.status(400).send({code: 400, message: 'require file'})
       }
       // user.picture = (req.file || {}).path;
       await Promise.all([user.save(), updateRegisterStep(_id, 1)])
-      return res.send({ success: true })
+      return res.send({success: true})
     } catch (e) {
       return res.error(e)
     }
   },
 )
 
-// STEP 2: Contact Info and ETC
+// STEP 2: Contact Info and etc.
 router.put(
   '/step2',
   closeAfterDeadline,
@@ -69,8 +73,9 @@ router.put(
   validateRegistrationStep[1],
   async (req, res) => {
     try {
-      const { _id } = req.user
-      const user = await User.findOne({ _id })
+      // const _id = '5a9a35bd6f40105594487d1b'
+      // const {_id} = req.user
+      const user = await User.findOne({_id})
       const fields = [
         'address',
         'province',
@@ -92,7 +97,7 @@ router.put(
         user[field] = req.body[field]
       })
       await Promise.all([user.save(), updateRegisterStep(_id, 2)])
-      return res.send({ success: true })
+      return res.send({success: true})
     } catch (e) {
       return res.error(e)
     }
@@ -107,14 +112,16 @@ router.put(
   validateRegistrationStep[2],
   async (req, res) => {
     try {
-      const { _id } = req.user
-      const user = await User.findOne({ _id })
+      // HACK: Experimenting with Backend
+      // const _id = '5a9a35bd6f40105594487d1b'
+      // const {_id} = req.user
+      const user = await User.findOne({_id})
       const fields = ['knowCamp', 'activities']
       fields.forEach(field => {
         user[field] = req.body[field]
       })
       await Promise.all([user.save(), updateRegisterStep(_id, 3)])
-      return res.send({ success: true })
+      return res.send({success: true})
     } catch (e) {
       return res.error(e)
     }
@@ -130,13 +137,17 @@ router.put(
   async (req, res) => {
     try {
       // TO CHECK: If role as affect on general question -> check role
-      const { answers } = req.body
-      const { _id } = req.user
-      const user = await User.findOne({ _id }).select('questions')
-      const questions = await Question.findOne({ _id: user.questions })
-      questions.generalQuestions = answers.map(answer => ({ answer }))
+      const {answers} = req.body
+      // const {_id} = req.user
+      const user = await User.findOne({_id}).select('questions')
+      console.log('User', user)
+
+      const questions = await Question.findOne({_id: user.questions})
+      console.log('Questions', questions)
+
+      questions.generalQuestions = answers.map(answer => ({answer}))
       await Promise.all([questions.save(), updateRegisterStep(_id, 4)])
-      return res.send({ success: true })
+      return res.send({success: true})
     } catch (e) {
       return res.error(e)
     }
@@ -153,21 +164,21 @@ router.put(
   majorQuestionValidator,
   async (req, res) => {
     try {
-      const { answers, major } = req.body
-      const { _id } = req.user
-      const user = await User.findOne({ _id }).select('questions')
-      const question = await Question.findOne({ _id: user.questions })
+      const {answers, major} = req.body
+      // const {_id} = req.user
+      const user = await User.findOne({_id}).select('questions')
+      const question = await Question.findOne({_id: user.questions})
       if (major === 'design') {
         question.specialQuestions[major] = [
-          { answer: answers[0] },
-          { answer: answers[1] },
-          { answer: answers[2] },
+          {answer: answers[0]},
+          {answer: answers[1]},
+          {answer: answers[2]},
         ]
         if (req.file) {
           user.designPortfolio = req.file.path
         }
       } else {
-        question.specialQuestions[major] = answers.map(answer => ({ answer }))
+        question.specialQuestions[major] = answers.map(answer => ({answer}))
       }
       if (question.completedMajor.indexOf(major) === -1) {
         question.completedMajor.push(major)
@@ -177,7 +188,7 @@ router.put(
         user.save(),
         updateRegisterStep(_id, 5),
       ])
-      return res.send({ success: true })
+      return res.send({success: true})
     } catch (e) {
       return res.error(e)
     }
@@ -190,17 +201,17 @@ router.post(
   authen('in progress'),
   async (req, res) => {
     try {
-      const { _id } = req.user
-      const user = await User.findOne({ _id }).populate('questions')
+      // const {_id} = req.user
+      const user = await User.findOne({_id}).populate('questions')
       if (user.completed.filter(isDone => !isDone).length !== 0) {
         return res.error('Non completed registration form.')
       }
-      const { major } = req.body
+      const {major} = req.body
       if (user.questions.completedMajor.indexOf(major) === -1) {
         return res.error('You did not completed major questions yet.')
       }
       const majorSpecialQuestions = user.questions.specialQuestions[major]
-      const question = await Question.findOne({ _id: user.questions._id })
+      const question = await Question.findOne({_id: user.questions._id})
       question.specialQuestions = {
         [major]: majorSpecialQuestions,
       }
@@ -209,7 +220,7 @@ router.post(
       user.major = req.body.major
       user.completed_at = new Date()
       await Promise.all([user.save(), question.save()])
-      return res.send({ success: true })
+      return res.send({success: true})
     } catch (e) {
       return res.error(e)
     }

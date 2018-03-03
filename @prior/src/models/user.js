@@ -1,12 +1,12 @@
 import mongoose from 'mongoose'
-const { Schema } = mongoose
-const { ObjectId } = Schema.Types
+const {Schema} = mongoose
+const {ObjectId} = Schema.Types
 
 const schema = new Schema({
-  __v: { type: Number, select: false },
+  __v: {type: Number, select: false},
   facebook: String,
   status: String,
-  questions: { type: ObjectId, ref: 'Question' },
+  questions: {type: ObjectId, ref: 'Question'},
   completed: [Boolean], // Mark boolean to check that user has done each step,
   completed_at: Date,
   // Step 1 Form field
@@ -68,7 +68,7 @@ const schema = new Schema({
   // Step 3 form field
   knowCamp: [String],
   activities: String,
-  knowCampAnother: { type: String, required: false }, // Aim to deprecated
+  knowCampAnother: {type: String, required: false}, // Aim to deprecated
   whyJoinYwc: String,
   expectation: String,
 
@@ -80,8 +80,8 @@ const schema = new Schema({
 
   line: String,
   interview: String,
-  homework: [{ question: String, answer: String, upload_url: String }],
-  idInterview: { type: String, required: false },
+  homework: [{question: String, answer: String, upload_url: String}],
+  idInterview: {type: String, required: false},
   interview_time: String,
   confirm_interview: Boolean,
   prominentPoint: String,
@@ -117,7 +117,7 @@ const schema = new Schema({
     type: Boolean,
     default: false,
   },
-  grader_id: { type: ObjectId, ref: 'Admin' },
+  grader_id: {type: ObjectId, ref: 'Admin'},
   interviewRef: String,
   isFinalist: Boolean,
   isFinalistBackup: Boolean,

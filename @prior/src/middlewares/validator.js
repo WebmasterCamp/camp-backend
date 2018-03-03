@@ -27,10 +27,10 @@ export const validateRegistrationStep = [
     req.checkBody('academicYear', 'Invalid').notEmpty()
     req.checkBody('university', 'Invalid').notEmpty()
     req.checkBody('sex', 'Invalid').notEmpty()
-    req
-      .checkBody('birthdate', 'Invalid')
-      .notEmpty()
-      .isDate()
+    // req
+    // .checkBody('birthdate', 'Invalid')
+    // .notEmpty()
+    // .isDate()
     req.checkBody('religion', 'Invalid').notEmpty()
     req.checkBody('blood', 'Invalid').notEmpty()
 
@@ -124,7 +124,7 @@ export const validateRegistrationStep = [
   },
   (req, res, next) => {
     req
-      .checkBody('major', 'Invalid role')
+      // .checkBody('major', 'Invalid role')
       .notEmpty()
       .isMajor()
     req.sanitizeBody('major').toString()
@@ -147,7 +147,7 @@ export const validateRegistrationStep = [
 ]
 
 export const majorQuestionValidator = (req, res, next) => {
-  const { major } = req.body
+  const {major} = req.body
   if (major === 'programming') {
     req
       .checkBody('answers', 'Invalid')
@@ -184,7 +184,7 @@ export const majorQuestionValidator = (req, res, next) => {
 }
 
 export const hasFile = (req, res, next) => {
-  if (!req.file) res.status(400).send({ code: 400, message: 'require file' })
+  if (!req.file) res.status(400).send({code: 400, message: 'require file'})
   else next()
 }
 
