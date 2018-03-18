@@ -16,6 +16,9 @@ import { validator } from './middlewares'
 
 mongoose.connect(
   process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  {
+    useMongoClient: true,
+  }
 )
 mongoose.connection.on('error', () => {
   console.error(
