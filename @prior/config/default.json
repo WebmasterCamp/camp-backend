@@ -1,0 +1,9 @@
+{
+  "MONGODB_URI": "mongodb://127.0.0.1:27017/jwc",
+  "STORAGE_PATH": "./uploads",
+  "LIMIT_UPLOAD_FILES": 2,
+  "LIMIT_UPLOAD_SIZE_MB": 2,
+  "FACEBOOK_ID": "MY_FACEBOOK_APPS_ID",
+  "FACEBOOK_SECRET": "MY_FACEBOOK_APPS_SECRET",
+  "JWT_SECRET": "WakandaForever"
+}
