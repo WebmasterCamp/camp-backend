@@ -26,14 +26,14 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')))
 
-app.use('/', express.static(app.get('public')))
-
 app.configure(express.rest())
 app.configure(socketio())
 
 app.configure(middleware)
 app.configure(services)
 app.configure(channels)
+
+app.use(express.static(app.get('public')))
 
 app.use(express.notFound())
 app.use(express.errorHandler({logger}))

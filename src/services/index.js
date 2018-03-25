@@ -1,9 +1,10 @@
-class HelloService {
-  async find(params) {
-    return {status: 200, data: 'Hello, World!'}
-  }
+import HelloService from './hello'
+
+function rootHandler(req, res) {
+  return res.status(200).send({status: 'OK'})
 }
 
-export default async function(app) {
+export default async function services(app) {
+  app.use('/', rootHandler)
   app.use('/hello', new HelloService())
 }
