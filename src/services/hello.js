@@ -1,5 +1,7 @@
-export default class HelloService {
-  async find(params) {
-    return {status: 200, data: 'Hello, World!'}
-  }
+function handler(req, res) {
+  res.status(200).send({message: 'JWCx Backend is now active.'})
+}
+
+export default async function hello(app) {
+  app.use('/', handler)
 }

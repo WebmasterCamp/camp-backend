@@ -110,3 +110,9 @@ $RECYCLE.BIN/
 # Others
 lib/
 data/
+
+# YWC15 backend is used as a reference
+@prior
+
+# Production Configuration
+config/production.json

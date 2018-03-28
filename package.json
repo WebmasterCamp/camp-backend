@@ -1,12 +1,10 @@
 {
   "name": "camp-backend",
-  "version": "0.1.0",
-  "description": "Backend for JWCx",
-  "main": "index.js",
-  "repository": "git@github.com:WebmasterCamp/camp-backend.git",
   "version": "0.0.1",
-  "homepage": "",
+  "description": "Backend for JWCx",
   "main": "src",
+  "repository": "git@github.com:WebmasterCamp/camp-backend.git",
+  "homepage": "",
   "author": {
     "name": "Phoomparin Mano",
     "email": "work@phoom.in.th"
@@ -32,7 +30,9 @@
     "compression": "^1.7.2",
     "config": "^1.30.0",
     "cors": "^2.8.4",
+    "feathers-mongoose": "^6.1.0",
     "helmet": "^3.12.0",
+    "mongoose": "^5.0.12",
     "serve-favicon": "^2.4.5",
     "winston": "^3.0.0-rc2"
   },

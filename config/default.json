@@ -1,6 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
+  "databaseURL": "mongodb://localhost:27017/feathers",
   "loglevel": "info",
   "public": "../public/",
   "paginate": {

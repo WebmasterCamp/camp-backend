@@ -444,6 +444,18 @@ eval("// eslint-disable-next-line no-unused-vars\nmodule.exports = function(app)
 
 /***/ }),
 
+/***/ "./src/models/camper.js":
+/*!******************************!*\
+  !*** ./src/models/camper.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mongoose */ \"mongoose\");\n/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mongoose__WEBPACK_IMPORTED_MODULE_0__);\n\n\nconst majors = ['content', 'programming', 'design', 'marketing']\n\nconst religions = [\n  'atheist',\n  'buddhism',\n  'christianity',\n  'islam',\n  'hinduism',\n  'sikhism',\n  'taoism',\n  'other',\n]\n\nconst CamperSchema = new mongoose__WEBPACK_IMPORTED_MODULE_0__[\"Schema\"]({\n  __v: {type: Number, select: false},\n  name: {type: String, required: true},\n  age: {type: Number},\n  parent: {type: mongoose__WEBPACK_IMPORTED_MODULE_0__[\"Schema\"].ObjectId, ref: 'Parent'},\n  major: {type: String, enum: majors, required: true},\n  religion: {type: String, enum: religions},\n  education: {type: String, required: true},\n  school: String,\n  address: String,\n  phone: {type: String},\n  email: {type: String},\n  social: String,\n  syndromes: String,\n  foodAllergies: String,\n  drugAllergies: String,\n})\n\nconst Camper = mongoose__WEBPACK_IMPORTED_MODULE_0___default.a.model('Camper', CamperSchema)\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Camper);\n\n\n//# sourceURL=webpack:///./src/models/camper.js?");
+
+/***/ }),
+
 /***/ "./src/services/hello.js":
 /*!*******************************!*\
   !*** ./src/services/hello.js ***!
@@ -452,7 +464,7 @@ eval("// eslint-disable-next-line no-unused-vars\nmodule.exports = function(app)
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return HelloService; });\nclass HelloService {\n  async find(params) {\n    return {status: 200, data: 'Hello, World!'}\n  }\n}\n\n\n//# sourceURL=webpack:///./src/services/hello.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return hello; });\nfunction handler(req, res) {\n  res.status(200).send({message: 'JWCx Backend is now active.'})\n}\n\nasync function hello(app) {\n  app.use('/', handler)\n}\n\n\n//# sourceURL=webpack:///./src/services/hello.js?");
 
 /***/ }),
 
@@ -464,7 +476,19 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return services; });\n/* harmony import */ var _hello__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hello */ \"./src/services/hello.js\");\n\n\nfunction rootHandler(req, res) {\n  return res.status(200).send({status: 'OK'})\n}\n\nasync function services(app) {\n  app.use('/', rootHandler)\n  app.use('/hello', new _hello__WEBPACK_IMPORTED_MODULE_0__[\"default\"]())\n}\n\n\n//# sourceURL=webpack:///./src/services/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return services; });\n/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mongoose */ \"mongoose\");\n/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mongoose__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! config */ \"config\");\n/* harmony import */ var config__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(config__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _hello__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hello */ \"./src/services/hello.js\");\n/* harmony import */ var _registration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./registration */ \"./src/services/registration.js\");\n\n\n\n\n\n\nfunction connect() {\n  try {\n    mongoose__WEBPACK_IMPORTED_MODULE_0___default.a.connect(config__WEBPACK_IMPORTED_MODULE_1__[\"databaseURL\"])\n  } catch (err) {\n    console.warn('Unable to connect to MongoDB:', err.message)\n  }\n\n  mongoose__WEBPACK_IMPORTED_MODULE_0___default.a.Promise = global.Promise\n}\n\nfunction services(app) {\n  connect()\n\n  app.configure(_registration__WEBPACK_IMPORTED_MODULE_3__[\"default\"])\n  app.configure(_hello__WEBPACK_IMPORTED_MODULE_2__[\"default\"])\n}\n\n\n//# sourceURL=webpack:///./src/services/index.js?");
+
+/***/ }),
+
+/***/ "./src/services/registration.js":
+/*!**************************************!*\
+  !*** ./src/services/registration.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return register; });\n/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mongoose */ \"mongoose\");\n/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mongoose__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _models_camper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/camper */ \"./src/models/camper.js\");\n\n\n\n\nclass RegistrationService {\n  async create(data, params) {\n    console.log('Data', data)\n    console.log('Params', params)\n\n    return {status: 'ACTIVE', data, params}\n  }\n}\n\nasync function register(app) {\n  app.use('/register', new RegistrationService())\n}\n\n\n//# sourceURL=webpack:///./src/services/registration.js?");
 
 /***/ }),
 
@@ -564,6 +588,17 @@ eval("module.exports = require(\"http\");\n\n//# sourceURL=webpack:///external_%
 /***/ (function(module, exports) {
 
 eval("module.exports = require(\"lodash\");\n\n//# sourceURL=webpack:///external_%22lodash%22?");
+
+/***/ }),
+
+/***/ "mongoose":
+/*!***************************!*\
+  !*** external "mongoose" ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = require(\"mongoose\");\n\n//# sourceURL=webpack:///external_%22mongoose%22?");
 
 /***/ }),
 
